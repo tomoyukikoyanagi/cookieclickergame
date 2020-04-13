@@ -23,33 +23,35 @@ struct ScreenSize {
     static let minheight = min(ScreenSize.width, ScreenSize.height)
 }
 
-struct DevieceType {
+struct DeviceType {
     static let isiPhone4OrLess = UIDevice.current.userInterfaceIdiom == .phone && ScreenSize.maxheight < 568.0
     static let isiPhone5 = UIDevice.current.userInterfaceIdiom == .phone && ScreenSize.maxheight == 568.0
     static let isiPhone6 = UIDevice.current.userInterfaceIdiom == .phone && ScreenSize.maxheight == 667.0
+    static let isiPhone6Plus = UIDevice.current.userInterfaceIdiom == .phone && ScreenSize.maxheight == 736.0
     static let isiPhoneX = UIDevice.current.userInterfaceIdiom == .phone && ScreenSize.maxheight == 812.0
     static let isiPad = UIDevice.current.userInterfaceIdiom == .pad && ScreenSize.maxheight == 1024.0
+    static let isiPadPro = UIDevice.current.userInterfaceIdiom == .pad && ScreenSize.maxheight == 1366.0
 }
 
 public extension CGFloat {
     public static func universalFont(size: CGFloat) -> CGFloat {
-        if DevieceType.isiPhone4OrLess {
+        if DeviceType.isiPhone4OrLess {
             return size * 0.6
         }
         
-        if DevieceType.isiPhone5 {
+        if DeviceType.isiPhone5 {
             return size * 0.8
         }
         
-        if DevieceType.isiPhone6 {
+        if DeviceType.isiPhone6 {
             return size * 1.0
         }
         
-        if DevieceType.isiPhoneX {
+        if DeviceType.isiPhoneX {
             return size * 1.0
         }
         
-        if DevieceType.isiPad {
+        if DeviceType.isiPad {
             return size * 2.1
         }
         else {
@@ -60,7 +62,19 @@ public extension CGFloat {
 }
 
 extension SKSpriteNode {
-  
+    func scaleTo(screenWidthPercentage: CGFloat) {
+        let aspectRatio = self.size.height / self.size.width
+        self.size.width = ScreenSize.width * screenWidthPercentage
+        self.size.height = self.size.width * aspectRatio
+    }
+    
+    func scaleTo(screenHeightPercentage: CGFloat) {
+        let aspectRatio = self.size.width / self.size.height
+        self.size.width = ScreenSize.width * screenHeightPercentage
+        self.size.height = self.size.height * aspectRatio
+    }
+    
+   
   func popUp(after: CGFloat = 0.0, sequenceNumber: Int = 1) {
     let action2Duration = 0.2
     let action3Duration = 0.06
@@ -179,4 +193,8 @@ extension SKLabelNode {
     let sequence = SKAction.sequence([action0, action1, action2, action3, action4, action5])
     self.run(sequence)
   }
+}
+
+extension Notification.Name {
+    static let notifyName = Notification.Name("notifyName")
 }

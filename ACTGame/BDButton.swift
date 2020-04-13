@@ -47,7 +47,7 @@ class BDButton: SKNode {
         
 //        text label will be set center
         if let titleLabel = titleLabel {
-            titleLabel.fontName = "Times New Roman"
+            titleLabel.fontName = "BubbleGum"
             titleLabel.fontSize = CGFloat.universalFont(size: 20)
             titleLabel.fontColor = SKColor.white
             titleLabel.zPosition = 1
@@ -66,8 +66,9 @@ class BDButton: SKNode {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if isEnabled {
-            mask.alpha = 0.5
-            run(SKAction.scale(by: 1.05, duration: 0.05))
+//            mask.alpha = 0.5
+            run(SKAction.scale(by: 1.25, duration: 0.05))
+            run(SKAction.scale(by: 0.8, duration: 0.01))
         }
     }
     
@@ -77,9 +78,9 @@ class BDButton: SKNode {
                 let location: CGPoint = touch.location(in: self)
                 
                 if button.contains(location) {
-                    mask.alpha = 0.5
+//                    mask.alpha = 0.5
                 } else {
-                    mask.alpha = 0.0
+//                    mask.alpha = 0.0
                 }
             }
         }
@@ -92,7 +93,7 @@ class BDButton: SKNode {
                 
                 if button.contains(location) {
                     ACTManager.shared.run(SoundFileName.TapFile.rawValue, onNode: self)
-                    disable()
+//                    disable()
                     action()
                     run(SKAction.sequence([SKAction.wait(forDuration:  0.2), SKAction.run({self.enable()
                     })]))
@@ -128,7 +129,7 @@ class BDButton: SKNode {
         let aspectRatio = button.size.height / button.size.width
         let screenWidth = ScreenSize.width
         var screenHeight = ScreenSize.height
-        if DevieceType.isiPhoneX {
+        if DeviceType.isiPhoneX {
             screenHeight -= 80.0
         }
         button.size.width = screenWidth * screenWithPercentage

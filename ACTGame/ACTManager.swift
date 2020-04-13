@@ -12,7 +12,7 @@ import SpriteKit
 class ACTManager {
     
     enum SceneType: Int {
-        case MainMenu, Gameplay
+        case MainMenu, Gameplay, GameOver
     }
     private init() {
         
@@ -55,6 +55,8 @@ class ACTManager {
     case SceneType.Gameplay:
         return Gameplay(size: CGSize(width: ScreenSize.width, height:
             ScreenSize.height))
+    case SceneType.GameOver:
+        return GameOver(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
     
         }
     }
