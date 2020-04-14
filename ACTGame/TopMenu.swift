@@ -11,9 +11,10 @@ import SpriteKit
 
 
 
-class TopMenu: SKScene, SKPopMenuDelegate {
+class TopMenu: SKScene, SKPopMenuDelegate{
     
-    var pop: SKPopMenu!
+    var pop: skMenu!
+    
     
 //    var scrollView: SwiftySKScrollView?
 //    let movableNode = SKNode()
@@ -184,7 +185,12 @@ class TopMenu: SKScene, SKPopMenuDelegate {
 //    MARK: 強化ボタン
     lazy var powerupsButton: BDButton = {
           var button = BDButton(imageNamed: "powerupButton", buttonAction:{
-            //self.pop.slideUp(0.2)
+            if self.pop.isShowing {
+                self.pop.slideDown(0.2)
+            } else {
+                self.pop.slideUp(0.2)
+            }
+            print("pubutton")
           })
           
           button.scaleTo(screenWithPercentage: 0.18)
@@ -210,10 +216,15 @@ class TopMenu: SKScene, SKPopMenuDelegate {
 //    func startGameplay() {
 //        ACTManager.shared.transition(self, toScene: .Gameplay, transition: SKTransition.moveIn(with: .right, duration:0.5))
 //    }
+    func displayPoPMenu() {
+        pop = skMenu(numberOfSections:5, sceneFrame: self.frame)
+        pop.popMenuDelegate = self
+    }
     
     override func didMove(to view: SKView) {
         print("moved to mainmenu")
         anchorPoint = CGPoint(x: 0.5, y:0.5)
+        displayPoPMenu()
         setupNodes()
         addNodes()
     }
@@ -236,30 +247,30 @@ class TopMenu: SKScene, SKPopMenuDelegate {
         addChild(spsLabel)
         addChild(sleepButton)
         addChild(powerupsButton)
-        //displayPoPMenu()
+        addChild(pop)
     }
     
-    func displayPoPMenu() {
-        pop = SKPopMenu(numberOfSections:5, sceneFrame: self.frame)
-        pop.setSectionColor(1, color: SKColor.red)
-        pop.setSectionColor(2, color: SKColor.magenta)
-        pop.setSectionColor(3, color: SKColor.purple)
-        pop.setSectionColor(4, color: SKColor.blue)
-        pop.setSectionColor(5, color: SKColor.darkGray)
-        pop.popMenuDelegate = self
-        self.addChild(pop)
-    }
     
+
     override func update(_ currentTime: TimeInterval) {
-       /* Called before each frame is rendered */
-     }
-     
-     // Delegate
-     func sectionTapped(_ index:Int, name:String) {
-       print("tapped: index " + "\(index)" + " " + name)
-       if pop.sections[index].name == "email" {
-         // email button tapped
-       }
-     }
+      /* Called before each frame is rendered */
+    }
+    
+    // Delegate
+    func sectionTapped(_ index:Int, name:String) {
+      print("tapped: index " + "\(index)" + " " + name)
+      if pop.sections[index].name == "email" {
+        // email button tapped
+      }
+    }
+    
+    func popMenuDidDisappear() {
+      print("did disappear")
+    }
+    
+    func popMenuDidAppear() {
+      print("did appear")
+    }
+    
 }
 
