@@ -13,7 +13,7 @@ class BDButton: SKNode {
     private var mask: SKSpriteNode
     private var cropNode:SKCropNode
     private var action: () -> Void
-    var isEnabled = true
+    private var isEnabled = true
     var titleLabel: SKLabelNode?
     
     
@@ -22,18 +22,13 @@ class BDButton: SKNode {
         titleLabel = SKLabelNode(text: title)
         mask = SKSpriteNode(color: SKColor.black, size: button.size)
         mask.alpha = 0.0
-        
         cropNode = SKCropNode()
         cropNode.maskNode = button
         cropNode.zPosition = 3
         cropNode.addChild(mask)
-        
         action = buttonAction
-        
         super.init()
-        
         isUserInteractionEnabled = true
-        
         setupNodes()
         addNodes()
     }
@@ -76,7 +71,6 @@ class BDButton: SKNode {
         if isEnabled {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
-                
                 if button.contains(location) {
 //                    mask.alpha = 0.5
                 } else {
@@ -90,7 +84,6 @@ class BDButton: SKNode {
         if isEnabled {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
-                
                 if button.contains(location) {
                     ACTManager.shared.run(SoundFileName.TapFile.rawValue, onNode: self)
 //                    disable()
@@ -112,7 +105,6 @@ class BDButton: SKNode {
         isEnabled = true
         mask.alpha = 0.0
         button.alpha = 1.0
-        
     }
     
     func logAvailableFonts() {
@@ -134,5 +126,9 @@ class BDButton: SKNode {
         }
         button.size.width = screenWidth * screenWithPercentage
         button.size.height = button.size.width * aspectRatio
+    }
+    
+    func changeImage(imageNamed: String){
+         button = SKSpriteNode(imageNamed: imageNamed)
     }
 }

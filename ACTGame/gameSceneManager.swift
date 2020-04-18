@@ -10,6 +10,8 @@ import Foundation
 import SpriteKit
 import UIKit
 
+let SHEEPCARDNUM:Int = 10
+
 class sheepManager {
     
     var sheeps : Int = 0
@@ -17,7 +19,8 @@ class sheepManager {
     var sheepsPerSecond : Int = 0
     var drinkUsed : Int = 0
     var areaLevel : Int = 1
-    
+//        羊の種類に応じた選択肢
+    var sheepLevel : [Int] = [0,0,0,0,0,0,0,0,0,0]
     static var shared = sheepManager()
     
     
@@ -29,11 +32,17 @@ class sheepManager {
         sheepsPerTap = 1
         drinkUsed = 0
         areaLevel = 1
+
+        sheepLevel = [0,0,0,0,0,0,0,0,0,0]
     }
     
     func addSPT() {
         sheeps += sheepsPerTap
         print("sheeps: \(sheeps)")
+    }
+    
+    func decreaseSheep(amount : Int) {
+        sheeps -= amount
     }
     
     func addSPS() {
@@ -45,8 +54,18 @@ class sheepManager {
         sheepsPerTap += amount
     }
     
+    func updateSPT() {
+        for i in 0 ... 9{
+            sheepsPerTap += sheepLevel[i]
+        }
+    }
+    
     func increaseSPS(amount: Int){
         sheepsPerSecond += amount
+    }
+    
+    func updateSPS() {
+        
     }
 }
 
@@ -58,10 +77,21 @@ class gameSceneManager {
     enum ImageName : String {
         case sheepbutton = "sheepbutton.png"
         case sleepButton = "sleepbutton.png"
+        case card0 = "card0.png"
+        case card1 = "card1.png"
+        case card2 = "card2.png"
+        case popmenuBackground1 = "popmenu1.png"
+        case popmenuBackground2 = "popmenu2.png"
+        case popmenuBackground3 = "popmenu3.png"
+        
+        case popmenuCancelButton = "popmenu_cancel.png"
     }
     
-
-    
+    var sheepCardName : [String]{
+        get{
+            return ["sheep1.png","sheep2.png","sheep0.png","sheep0.png","sheep0.png","sheep0.png"]
+        }
+    }
 //    private init() {
 //
 //    }
