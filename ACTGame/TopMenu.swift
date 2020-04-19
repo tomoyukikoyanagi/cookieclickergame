@@ -17,7 +17,7 @@ let sheepCardLabelName : [String] = []
 class TopMenu: SKScene{
     var scrollView : SwiftySKScrollView?
     let moveableNode = SKNode()
-    var sheepCardList : [BDButton] = []
+    var sheepCardList : [SKCard] = []
     
     private var sheepWalkingFrames: [SKTexture] = []
     private var currentSheepNumber = 0
@@ -356,7 +356,7 @@ class TopMenu: SKScene{
             let y_position = -30
             
             for i in 0 ... 4 {
-                var card = BDButton(imageNamed: sheepCardName[i], buttonAction:{
+                var card = SKCard(imageNamed: sheepCardName[i], amountTitle: "0SPT" , buttonTitle: "50sheeps", buttonAction:{
                     self.updateCard(cardNo: i)
                 })
                 if i == 0{
@@ -364,9 +364,7 @@ class TopMenu: SKScene{
                 } else {
                     card.disable()
                 }
-                var label1 = "Lv.0"
                 card.position = CGPoint(x: x_position, y: y_position)
-//                card.zPosition = 3
                 card.scaleTo(screenWithPercentage: 0.45)
                 scrollView.addChild(card)
                 x_position += 200
