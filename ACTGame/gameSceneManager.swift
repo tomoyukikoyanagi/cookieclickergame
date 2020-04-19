@@ -77,14 +77,19 @@ class gameSceneManager {
     enum ImageName : String {
         case sheepbutton = "sheepbutton.png"
         case sleepButton = "sleepbutton.png"
+        
         case card0 = "card0.png"
         case card1 = "card1.png"
         case card2 = "card2.png"
+        
         case popmenuBackground1 = "popmenu1.png"
         case popmenuBackground2 = "popmenu2.png"
         case popmenuBackground3 = "popmenu3.png"
-        
+    
         case popmenuCancelButton = "popmenu_cancel.png"
+        
+        case drink_enabled = "drinkbutton_enabled.png"
+        case drink_disabled = "drinkbutton_disabled.png"
     }
     
     var sheepCardName : [String]{

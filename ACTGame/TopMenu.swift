@@ -11,7 +11,7 @@ import SpriteKit
 
 import SwiftySKScrollView
 
-let sheepCardName : [String] = ["card1.png","card2.png","card0.png","card0.png","card0.png","card0.png"]
+
 let sheepCardLabelName : [String] = []
 
 class TopMenu: SKScene{
@@ -28,6 +28,7 @@ class TopMenu: SKScene{
     let popMenuCancelButton_position = CGPoint(x: ScreenSize.width * -0.4, y: ScreenSize.height * -1.0)
     let menuChangeButton_position = CGPoint(x: ScreenSize.width * -0.2, y: ScreenSize.height * -1.0)
     
+//    MARK: TimerUpdate
     override init(size: CGSize) {
         super.init(size: size)
         NotificationCenter.default.addObserver(self, selector: #selector(updateSPS(notification:)), name: .notifyName, object: nil)
@@ -156,15 +157,26 @@ class TopMenu: SKScene{
         return sheep
     }
     
-    lazy var settingsButton: BDButton = {
+    //    MARK:ドリンクボタン
+    lazy var useDrinkButton: DrinkButton = {
+        var button = DrinkButton(buttonAction: {})
+        button.disable()
+        button.scaleTo(screenWithPercentage: 0.2)
+        button.zPosition = 1
+        return button
+    }()
+    
+//    MARK:ゆめにっきボタン
+    lazy var diaryButton: BDButton = {
         var button = BDButton(imageNamed: "****", buttonAction:{})
         button.scaleTo(screenWithPercentage: 0.27)
         button.zPosition = 1
         return button
     }()
     
-    lazy var diaryButton: BDButton = {
-        var button = BDButton(imageNamed: "****n", buttonAction:{})
+//    MARK:設定ボタン
+    lazy var settingsButton: BDButton = {
+        var button = BDButton(imageNamed: "****", buttonAction:{})
         button.scaleTo(screenWithPercentage: 0.27)
         button.zPosition = 1
         return button
@@ -208,8 +220,6 @@ class TopMenu: SKScene{
 //        ACTManager.shared.transition(self, toScene: .Gameplay, transition: SKTransition.moveIn(with: .right, duration:0.5))
 //    }
     
-
-    
     override func didMove(to view: SKView) {
         print("moved to mainmenu")
         anchorPoint = CGPoint(x: 0.5, y:0.5)
@@ -218,6 +228,7 @@ class TopMenu: SKScene{
         setupNodes()
         addNodes()
     }
+    
 //    MARK:setupNodes
     func setupNodes() {
         background.position = CGPoint.zero
@@ -227,6 +238,7 @@ class TopMenu: SKScene{
         spsLabel.position = CGPoint(x: ScreenSize.width * 0.2, y: ScreenSize.height * 0.4)
         sleepButton.position = CGPoint(x:ScreenSize.width * -0.2, y: ScreenSize.height * -0.30)
         powerupsButton.position = CGPoint(x: ScreenSize.width * 0, y: ScreenSize.height * -0.4)
+        useDrinkButton.position = CGPoint(x: ScreenSize.width * -0.35, y:ScreenSize.height * -0.4)
         
         moveableNode.position = moveableNode_position
         popMenuBackground.position = popMenuBackground_position
@@ -242,6 +254,7 @@ class TopMenu: SKScene{
         addChild(sptLabel)
         addChild(spsLabel)
         addChild(sleepButton)
+        addChild(useDrinkButton)
         addChild(powerupsButton)
         addChild(moveableNode)
         addChild(popMenuBackground)
@@ -249,6 +262,10 @@ class TopMenu: SKScene{
         addChild(menuChangeButton)
     }
 
+    
+    
+    
+    
     
     //    MARK: 強化アイテムメニュー
         lazy var popMenuBackground : SKSpriteNode =  {
@@ -355,9 +372,10 @@ class TopMenu: SKScene{
             var x_position = -50
             let y_position = -30
             
-            for i in 0 ... 4 {
-                var card = SKCard(imageNamed: sheepCardName[i], amountTitle: "0SPT" , buttonTitle: "50sheeps", buttonAction:{
+            for i in 0 ... 6 {
+                var card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(getSPSStruct(sheep: sheepNameArray[i])[0])" , buttonTitle: "\(getPriceStruct(sheep: sheepNameArray[i])[0])", buttonAction:{
                     self.updateCard(cardNo: i)
+                    
                 })
                 if i == 0{
                     card.enable()
@@ -373,10 +391,14 @@ class TopMenu: SKScene{
         }
         
         func updateCard(cardNo: Int){
+//            お金がなかった場合の処理をここに書き下す
+            let sheep = sheepManager.shared
+            sheep.sheeps -= sheepCardList[cardNo].getPrice()
+            
             if cardNo < self.sheepCardList.count{
                 self.sheepCardList[cardNo + 1].enable()
+                self.sheepCardList[cardNo].changeLevelLabel(addLevel: 1)
             }
-            let sheep = sheepManager.shared
             sheep.sheepLevel[cardNo] += 1
             sheep.updateSPT()
             self.updateLabels()

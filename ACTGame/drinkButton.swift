@@ -8,30 +8,25 @@
 
 import SpriteKit
 
-class SKCard: SKNode {
-    var card: SKSpriteNode
+class DrinkButton: SKNode {
+    var button: SKSpriteNode
     private var mask: SKSpriteNode
     private var cropNode:SKCropNode
     private var action: () -> Void
     private var isEnabled = true
-    
-    private var level : Int
-    
-    var levelLabel: SKLabelNode?
-    var amountLabel: SKLabelNode?
-    var buttonLabel: SKLabelNode?
-    
-    
-    init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void){
-        level = 0
-        card = SKSpriteNode(imageNamed: imageNamed)
-        levelLabel = SKLabelNode(text: "Lv.\(level)")
-        amountLabel = SKLabelNode(text: amountTitle)
-        buttonLabel = SKLabelNode(text: buttonTitle)
-        mask = SKSpriteNode(color: SKColor.black, size: card.size)
+    var drinkLeftLabel: SKLabelNode?
+    var nameLabel: SKLabelNode?
+    var drinkLeft: Int
+
+    init (buttonAction: @escaping () -> Void){
+        drinkLeft = 0
+        button = SKSpriteNode(imageNamed: gameSceneManager.ImageName.drink_disabled.rawValue)
+        drinkLeftLabel = SKLabelNode(text: "\(drinkLeft)")
+        nameLabel = SKLabelNode(text: "")
+        mask = SKSpriteNode(color: SKColor.black, size: button.size)
         mask.alpha = 0.0
         cropNode = SKCropNode()
-        cropNode.maskNode = card
+        cropNode.maskNode = button
         cropNode.zPosition = 3
         cropNode.addChild(mask)
         action = buttonAction
@@ -46,45 +41,36 @@ class SKCard: SKNode {
     }
     
     func setupNodes() {
-        card.zPosition = 0
-        if let levelLabel = levelLabel {
-            setupLabel(label: levelLabel)
-            levelLabel.position = CGPoint(x:-55, y: 118)
-            levelLabel.verticalAlignmentMode = .top
-            levelLabel.horizontalAlignmentMode = .left
+        button.zPosition = 0
+        if let nameLabel = nameLabel {
+            setupLabel(label: nameLabel)
+            nameLabel.position = CGPoint(x:0, y: -35)
+            nameLabel.verticalAlignmentMode = .center
+            nameLabel.horizontalAlignmentMode = .center
         }
-        if let amountLabel = amountLabel {
-            setupLabel(label: amountLabel)
-            amountLabel.position = CGPoint(x:55, y: 118)
-            amountLabel.verticalAlignmentMode = .top
-            amountLabel.horizontalAlignmentMode = .right
-            
-        }
-        if let buttonLabel = buttonLabel {
-            setupLabel(label: buttonLabel)
-            buttonLabel.position = CGPoint(x:0, y: -110)
-            buttonLabel.horizontalAlignmentMode = .center
-            buttonLabel.verticalAlignmentMode = .bottom
+        if let drinkLeftLabel = drinkLeftLabel {
+            setupLabel(label: drinkLeftLabel)
+            drinkLeftLabel.position = CGPoint(x:25, y: 35)
+            drinkLeftLabel.verticalAlignmentMode = .center
+            drinkLeftLabel.horizontalAlignmentMode = .left
+
         }
     }
     
     func setupLabel(label: SKLabelNode){
         label.fontName = "****"
-        label.fontSize = CGFloat.universalFont(size: 20)
+        label.fontSize = CGFloat.universalFont(size: 18)
         label.fontColor = SKColor.white
         label.zPosition = 1
     }
     
     func addNodes() {
-        addChild(card)
-        if let levelLabel = levelLabel {
-            addChild(levelLabel)
+        addChild(button)
+        if let nameLabel = nameLabel{
+            addChild(nameLabel)
         }
-        if let amountLabel = amountLabel {
-            addChild(amountLabel)
-        }
-        if let buttonLabel = buttonLabel {
-            addChild(buttonLabel)
+        if let drinkLeftLabel = drinkLeftLabel {
+            addChild(drinkLeftLabel)
         }
         addChild(cropNode)
     }
@@ -101,7 +87,7 @@ class SKCard: SKNode {
         if isEnabled {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
-                if card.contains(location) {
+                if button.contains(location) {
 //                    mask.alpha = 0.5
                 } else {
 //                    mask.alpha = 0.0
@@ -114,7 +100,7 @@ class SKCard: SKNode {
         if isEnabled {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
-                if card.contains(location) {
+                if button.contains(location) {
                     ACTManager.shared.run(SoundFileName.TapFile.rawValue, onNode: self)
 //                    disable()
                     action()
@@ -128,13 +114,13 @@ class SKCard: SKNode {
     func disable() {
         isEnabled = false
         mask.alpha = 0.0
-        card.alpha = 0.3
+        button.texture = SKTexture(imageNamed: gameSceneManager.ImageName.drink_disabled.rawValue)
     }
     
     func enable() {
         isEnabled = true
         mask.alpha = 0.0
-        card.alpha = 1.0
+        button.texture = SKTexture(imageNamed: gameSceneManager.ImageName.drink_enabled.rawValue)
     }
     
     func logAvailableFonts() {
@@ -143,38 +129,31 @@ class SKCard: SKNode {
             for names: String in UIFont.fontNames(forFamilyName: family) {
                 print ("==\(names)")
             }
-            
         }
     }
     
     func scaleTo(screenWithPercentage: CGFloat){
-        let aspectRatio = card.size.height / card.size.width
+        let aspectRatio = button.size.height / button.size.width
         let screenWidth = ScreenSize.width
         var screenHeight = ScreenSize.height
         if DeviceType.isiPhoneX {
             screenHeight -= 80.0
         }
-        card.size.width = screenWidth * screenWithPercentage
-        card.size.height = card.size.width * aspectRatio
+        button.size.width = screenWidth * screenWithPercentage
+        button.size.height = button.size.width * aspectRatio
     }
     
-    func changeImage(imageNamed: String){
-         card = SKSpriteNode(imageNamed: imageNamed)
-    }
-    
-    func changeLevelLabel(addLevel: Int){
-        level += addLevel
-        levelLabel?.text = "Lv.\(level)"
-        amountLabel?.text = "\(coridale.addSPS[level - 1])"
-        buttonLabel?.text = "\(coridale.price[level - 1])"
-        if level == 10{
-            buttonLabel?.text = "レベル最大"
+    func updateLevelLabel(amount: Int){
+        drinkLeft += amount
+        if drinkLeft < 0 {
+            drinkLeft = 0
         }
+            drinkLeftLabel?.text = "\(drinkLeft)"
     }
     
-    func getPrice() -> Int{
-        let price = buttonLabel?.text ?? "0"
-        return Int(price) ?? 0
+    func drinkMode(){
+        
     }
 }
+
 
