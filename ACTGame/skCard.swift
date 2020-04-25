@@ -10,6 +10,8 @@ import SpriteKit
 
 class SKCard: SKNode {
     var card: SKSpriteNode
+//    var sheepImage: SKSpriteNode
+    var button : BDButton
     private var mask: SKSpriteNode
     private var cropNode:SKCropNode
     private var action: () -> Void
@@ -19,15 +21,19 @@ class SKCard: SKNode {
     
     var levelLabel: SKLabelNode?
     var amountLabel: SKLabelNode?
-    var buttonLabel: SKLabelNode?
-    
+//    var buttonLabel: SKLabelNode?
     
     init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void){
         level = 0
-        card = SKSpriteNode(imageNamed: imageNamed)
+        card = SKSpriteNode(imageNamed: "card.png")
+//        sheepImage = SKSpriteNode(imageNamed: imageNamed)
         levelLabel = SKLabelNode(text: "Lv.\(level)")
         amountLabel = SKLabelNode(text: amountTitle)
-        buttonLabel = SKLabelNode(text: buttonTitle)
+//        buttonLabel = SKLabelNode(text: buttonTitle)
+        button = BDButton(imageNamed:"cardbutton.png", title:buttonTitle, buttonAction: {
+        //           add action
+            
+                })
         mask = SKSpriteNode(color: SKColor.black, size: card.size)
         mask.alpha = 0.0
         cropNode = SKCropNode()
@@ -42,7 +48,7 @@ class SKCard: SKNode {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("initcoder has not been impemented")
+        fatalError("init(coder:) has not been implemented")
     }
     
     func setupNodes() {
@@ -60,12 +66,14 @@ class SKCard: SKNode {
             amountLabel.horizontalAlignmentMode = .right
             
         }
-        if let buttonLabel = buttonLabel {
-            setupLabel(label: buttonLabel)
-            buttonLabel.position = CGPoint(x:0, y: -110)
-            buttonLabel.horizontalAlignmentMode = .center
-            buttonLabel.verticalAlignmentMode = .bottom
-        }
+//        if let buttonLabel = buttonLabel {
+//            setupLabel(label: buttonLabel)
+//            buttonLabel.position = CGPoint(x:0, y: -110)
+//            buttonLabel.horizontalAlignmentMode = .center
+//            buttonLabel.verticalAlignmentMode = .bottom
+//        }
+        button.position = CGPoint(x:0, y: -90)
+        button.scaleTo(screenWithPercentage: 0.4)
     }
     
     func setupLabel(label: SKLabelNode){
@@ -83,9 +91,11 @@ class SKCard: SKNode {
         if let amountLabel = amountLabel {
             addChild(amountLabel)
         }
-        if let buttonLabel = buttonLabel {
-            addChild(buttonLabel)
-        }
+//        if let buttonLabel = buttonLabel {
+//            addChild(buttonLabel)
+//
+//        }
+        addChild(button)
         addChild(cropNode)
     }
     
@@ -128,13 +138,33 @@ class SKCard: SKNode {
     func disable() {
         isEnabled = false
         mask.alpha = 0.0
-        card.alpha = 0.3
+//        card.alpha = 0.3
+        amountLabel?.alpha = 0.3
+        self.button.disable()
     }
     
     func enable() {
         isEnabled = true
         mask.alpha = 0.0
-        card.alpha = 1.0
+        amountLabel?.alpha = 1.0
+//        card.alpha = 1.0
+        self.button.enable()
+    }
+    
+    func buttonEnable() {
+        button.enable()
+        button.alpha = 1.0
+    }
+    
+    func buttonDisable() {
+        button.disable()
+        button.alpha = 0.3
+    }
+    
+    func checkPurchacable(sheep: Int){
+        if sheep < self.getPrice() {
+            self.isEnabled = false
+        }
     }
     
     func logAvailableFonts() {
@@ -162,18 +192,18 @@ class SKCard: SKNode {
          card = SKSpriteNode(imageNamed: imageNamed)
     }
     
-    func changeLevelLabel(addLevel: Int){
+    func updateButtonLabel(addLevel: Int){
         level += addLevel
         levelLabel?.text = "Lv.\(level)"
         amountLabel?.text = "\(coridale.addSPS[level - 1])"
-        buttonLabel?.text = "\(coridale.price[level - 1])"
+        button.setTitle(title: "\(coridale.price[level - 1])")
         if level == 10{
-            buttonLabel?.text = "レベル最大"
+            button.setTitle(title: "レベル最大")
         }
     }
     
     func getPrice() -> Int{
-        let price = buttonLabel?.text ?? "0"
+        let price = button.titleLabel?.text ?? "0"
         return Int(price) ?? 0
     }
 }

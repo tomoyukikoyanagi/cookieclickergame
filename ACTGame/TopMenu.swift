@@ -373,9 +373,8 @@ class TopMenu: SKScene{
             let y_position = -30
             
             for i in 0 ... 6 {
-                var card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(getSPSStruct(sheep: sheepNameArray[i])[0])" , buttonTitle: "\(getPriceStruct(sheep: sheepNameArray[i])[0])", buttonAction:{
+                let card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(getSPSStruct(sheep: sheepNameArray[i])[0])" , buttonTitle: "\(getPriceStruct(sheep: sheepNameArray[i])[0])", buttonAction:{
                     self.updateCard(cardNo: i)
-                    
                 })
                 if i == 0{
                     card.enable()
@@ -390,6 +389,10 @@ class TopMenu: SKScene{
             }
         }
         
+    func checkPurchacePopUp(){
+        
+    }
+    
         func updateCard(cardNo: Int){
 //            お金がなかった場合の処理をここに書き下す
             let sheep = sheepManager.shared
@@ -397,7 +400,7 @@ class TopMenu: SKScene{
             
             if cardNo < self.sheepCardList.count{
                 self.sheepCardList[cardNo + 1].enable()
-                self.sheepCardList[cardNo].changeLevelLabel(addLevel: 1)
+                self.sheepCardList[cardNo].updateButtonLabel(addLevel: 1)
             }
             sheep.sheepLevel[cardNo] += 1
             sheep.updateSPT()

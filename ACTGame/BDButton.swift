@@ -99,12 +99,15 @@ class BDButton: SKNode {
         isEnabled = false
         mask.alpha = 0.0
         button.alpha = 0.3
+        titleLabel?.alpha = 0.3
+        
     }
     
     func enable() {
         isEnabled = true
         mask.alpha = 0.0
         button.alpha = 1.0
+        titleLabel?.alpha = 1.0
     }
     
     func logAvailableFonts() {
@@ -130,5 +133,9 @@ class BDButton: SKNode {
     
     func changeImage(imageNamed: String){
          button = SKSpriteNode(imageNamed: imageNamed)
+    }
+    
+    func setTitle(title: String){
+        titleLabel?.text = title
     }
 }
