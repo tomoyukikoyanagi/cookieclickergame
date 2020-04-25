@@ -11,17 +11,16 @@ import SpriteKit
 class SKCard: SKNode {
     var card: SKSpriteNode
 //    var sheepImage: SKSpriteNode
-    var button : BDButton
     private var mask: SKSpriteNode
     private var cropNode:SKCropNode
     private var action: () -> Void
     private var isEnabled = true
+    private var title: String
     
     private var level : Int
     
     var levelLabel: SKLabelNode?
     var amountLabel: SKLabelNode?
-//    var buttonLabel: SKLabelNode?
     
     init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void){
         level = 0
@@ -29,11 +28,7 @@ class SKCard: SKNode {
 //        sheepImage = SKSpriteNode(imageNamed: imageNamed)
         levelLabel = SKLabelNode(text: "Lv.\(level)")
         amountLabel = SKLabelNode(text: amountTitle)
-//        buttonLabel = SKLabelNode(text: buttonTitle)
-        button = BDButton(imageNamed:"cardbutton.png", title:buttonTitle, buttonAction: {
-        //           add action
-            
-                })
+        title = buttonTitle ?? " "
         mask = SKSpriteNode(color: SKColor.black, size: card.size)
         mask.alpha = 0.0
         cropNode = SKCropNode()
@@ -46,6 +41,16 @@ class SKCard: SKNode {
         setupNodes()
         addNodes()
     }
+    
+    lazy var purchaseButton: BDButton = {
+        var button = BDButton(imageNamed: "cardbutton.png", title: self.title, buttonAction: {
+            self.purchase()
+            print("pressed purchase button")
+        })
+        button.position = CGPoint(x:0, y: -90)
+        button.scaleTo(screenWithPercentage: 0.4)
+        return button
+    }()
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -72,8 +77,6 @@ class SKCard: SKNode {
 //            buttonLabel.horizontalAlignmentMode = .center
 //            buttonLabel.verticalAlignmentMode = .bottom
 //        }
-        button.position = CGPoint(x:0, y: -90)
-        button.scaleTo(screenWithPercentage: 0.4)
     }
     
     func setupLabel(label: SKLabelNode){
@@ -95,7 +98,8 @@ class SKCard: SKNode {
 //            addChild(buttonLabel)
 //
 //        }
-        addChild(button)
+//        addChild(button)
+        addChild(purchaseButton)
         addChild(cropNode)
     }
     
@@ -140,7 +144,7 @@ class SKCard: SKNode {
         mask.alpha = 0.0
 //        card.alpha = 0.3
         amountLabel?.alpha = 0.3
-        self.button.disable()
+        purchaseButton.disable()
     }
     
     func enable() {
@@ -148,17 +152,7 @@ class SKCard: SKNode {
         mask.alpha = 0.0
         amountLabel?.alpha = 1.0
 //        card.alpha = 1.0
-        self.button.enable()
-    }
-    
-    func buttonEnable() {
-        button.enable()
-        button.alpha = 1.0
-    }
-    
-    func buttonDisable() {
-        button.disable()
-        button.alpha = 0.3
+        purchaseButton.enable()
     }
     
     func checkPurchacable(sheep: Int){
@@ -192,19 +186,30 @@ class SKCard: SKNode {
          card = SKSpriteNode(imageNamed: imageNamed)
     }
     
+    
+    
+    func getPrice() -> Int{
+        let price = purchaseButton.titleLabel?.text ?? "0"
+        return Int(price) ?? 0
+    }
+    
+    func purchase() {
+        NotificationCenter.default.post(name: .notifyPopup, object: nil)
+        let sheep = sheepManager.shared
+        sheep.sheeps -= self.getPrice()
+        if self.level < 10 {
+            self.updateButtonLabel(addLevel: 1)
+        }
+    }
+    
     func updateButtonLabel(addLevel: Int){
         level += addLevel
         levelLabel?.text = "Lv.\(level)"
         amountLabel?.text = "\(coridale.addSPS[level - 1])"
-        button.setTitle(title: "\(coridale.price[level - 1])")
+        purchaseButton.setTitle(title: "\(coridale.price[level - 1])")
         if level == 10{
-            button.setTitle(title: "レベル最大")
+            purchaseButton.setTitle(title: "レベル最大")
         }
-    }
-    
-    func getPrice() -> Int{
-        let price = button.titleLabel?.text ?? "0"
-        return Int(price) ?? 0
     }
 }
 

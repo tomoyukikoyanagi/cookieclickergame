@@ -14,6 +14,8 @@ import SwiftySKScrollView
 
 let sheepCardLabelName : [String] = []
 
+let POPUP_ZPOSITION : CGFloat = 10
+
 class TopMenu: SKScene{
     var scrollView : SwiftySKScrollView?
     let moveableNode = SKNode()
@@ -32,6 +34,7 @@ class TopMenu: SKScene{
     override init(size: CGSize) {
         super.init(size: size)
         NotificationCenter.default.addObserver(self, selector: #selector(updateSPS(notification:)), name: .notifyName, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(checkPurchacePopUp(notification:)), name: .notifyPopup, object: nil)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -374,7 +377,7 @@ class TopMenu: SKScene{
             
             for i in 0 ... 6 {
                 let card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(getSPSStruct(sheep: sheepNameArray[i])[0])" , buttonTitle: "\(getPriceStruct(sheep: sheepNameArray[i])[0])", buttonAction:{
-                    self.updateCard(cardNo: i)
+//                    self.updateCard(cardNo: i)
                 })
                 if i == 0{
                     card.enable()
@@ -389,15 +392,19 @@ class TopMenu: SKScene{
             }
         }
         
-    func checkPurchacePopUp(){
-        
+    @objc func checkPurchacePopUp(notification: NSNotification?){
+        let popup = PurchasePopUpMenu(buttonAction: {
+            self.scrollView?.isDisabled = false
+        })
+        popup.zPosition = POPUP_ZPOSITION
+        scrollView?.isDisabled = true
+        addChild(popup)
     }
     
         func updateCard(cardNo: Int){
 //            お金がなかった場合の処理をここに書き下す
             let sheep = sheepManager.shared
             sheep.sheeps -= sheepCardList[cardNo].getPrice()
-            
             if cardNo < self.sheepCardList.count{
                 self.sheepCardList[cardNo + 1].enable()
                 self.sheepCardList[cardNo].updateButtonLabel(addLevel: 1)
