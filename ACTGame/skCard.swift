@@ -14,6 +14,7 @@ class SKCard: SKNode {
     private var mask: SKSpriteNode
     private var cropNode:SKCropNode
     private var action: () -> Void
+ 
     private var isEnabled = true
     private var title: String
     
@@ -22,7 +23,7 @@ class SKCard: SKNode {
     var levelLabel: SKLabelNode?
     var amountLabel: SKLabelNode?
     
-    init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void){
+    init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void ){
         level = 0
         card = SKSpriteNode(imageNamed: "card.png")
 //        sheepImage = SKSpriteNode(imageNamed: imageNamed)
@@ -36,6 +37,7 @@ class SKCard: SKNode {
         cropNode.zPosition = 3
         cropNode.addChild(mask)
         action = buttonAction
+
         super.init()
         isUserInteractionEnabled = true
         setupNodes()
@@ -44,7 +46,8 @@ class SKCard: SKNode {
     
     lazy var purchaseButton: BDButton = {
         var button = BDButton(imageNamed: "cardbutton.png", title: self.title, buttonAction: {
-            self.purchase()
+            self.action()
+//            self.addPopup()
             print("pressed purchase button")
         })
         button.position = CGPoint(x:0, y: -90)
@@ -69,14 +72,7 @@ class SKCard: SKNode {
             amountLabel.position = CGPoint(x:55, y: 118)
             amountLabel.verticalAlignmentMode = .top
             amountLabel.horizontalAlignmentMode = .right
-            
         }
-//        if let buttonLabel = buttonLabel {
-//            setupLabel(label: buttonLabel)
-//            buttonLabel.position = CGPoint(x:0, y: -110)
-//            buttonLabel.horizontalAlignmentMode = .center
-//            buttonLabel.verticalAlignmentMode = .bottom
-//        }
     }
     
     func setupLabel(label: SKLabelNode){
@@ -94,11 +90,6 @@ class SKCard: SKNode {
         if let amountLabel = amountLabel {
             addChild(amountLabel)
         }
-//        if let buttonLabel = buttonLabel {
-//            addChild(buttonLabel)
-//
-//        }
-//        addChild(button)
         addChild(purchaseButton)
         addChild(cropNode)
     }
@@ -131,7 +122,6 @@ class SKCard: SKNode {
                 if card.contains(location) {
                     ACTManager.shared.run(SoundFileName.TapFile.rawValue, onNode: self)
 //                    disable()
-                    action()
                     run(SKAction.sequence([SKAction.wait(forDuration:  0.2), SKAction.run({self.enable()
                     })]))
                 }
@@ -193,8 +183,12 @@ class SKCard: SKNode {
         return Int(price) ?? 0
     }
     
-    func purchase() {
+    func addPopup() {
         NotificationCenter.default.post(name: .notifyPopup, object: nil)
+        
+    }
+    
+    func purchace(){
         let sheep = sheepManager.shared
         sheep.sheeps -= self.getPrice()
         if self.level < 10 {

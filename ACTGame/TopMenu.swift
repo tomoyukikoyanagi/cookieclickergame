@@ -34,8 +34,7 @@ class TopMenu: SKScene{
     override init(size: CGSize) {
         super.init(size: size)
         NotificationCenter.default.addObserver(self, selector: #selector(updateSPS(notification:)), name: .notifyName, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(checkPurchacePopUp(notification:)), name: .notifyPopup, object: nil)
-    }
+        }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("Error")
@@ -376,8 +375,8 @@ class TopMenu: SKScene{
             let y_position = -30
             
             for i in 0 ... 6 {
-                let card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(getSPSStruct(sheep: sheepNameArray[i])[0])" , buttonTitle: "\(getPriceStruct(sheep: sheepNameArray[i])[0])", buttonAction:{
-//                    self.updateCard(cardNo: i)
+                let card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(getSPSStruct(sheep: sheepNameArray[i])[0])" , buttonTitle: "\(getPriceStruct(sheep: sheepNameArray[i])[0])", buttonAction: {
+                    self.addPopup(cardNo: i)
                 })
                 if i == 0{
                     card.enable()
@@ -391,16 +390,31 @@ class TopMenu: SKScene{
                 self.sheepCardList.append(card)
             }
         }
-        
-    @objc func checkPurchacePopUp(notification: NSNotification?){
-        let popup = PurchasePopUpMenu(buttonAction: {
+    
+    func addPopup(cardNo: Int){
+        let sheep = sheepManager.shared
+        if sheep.sheeps < sheepCardList[cardNo].getPrice(){
+            scrollView?.isDisabled = true
+        let popup = PurchasePopUpMenu1(buttonAction: {
             self.scrollView?.isDisabled = false
         })
-        popup.zPosition = POPUP_ZPOSITION
-        scrollView?.isDisabled = true
-        addChild(popup)
+            popup.zPosition = POPUP_ZPOSITION
+            
+            addChild(popup)
+        } else {
+            scrollView?.isDisabled = true
+            let popup = PurchasePopUpMenu2(cancelAction: {
+                        self.scrollView?.isDisabled = false
+                           }, purchaseAction: {
+                               self.scrollView?.isDisabled = false
+                               self.updateCard(cardNo: cardNo)
+                           })
+            popup.zPosition = POPUP_ZPOSITION
+            addChild(popup)
+        }
+        
     }
-    
+
         func updateCard(cardNo: Int){
 //            お金がなかった場合の処理をここに書き下す
             let sheep = sheepManager.shared
