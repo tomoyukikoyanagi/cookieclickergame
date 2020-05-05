@@ -193,14 +193,8 @@ class TopMenu: SKScene{
 //    このボタンは現在仮で値のリセットに使っています
     lazy var sleepButton: BDButton = {
         var button = BDButton(imageNamed: gameSceneManager.ImageName.sleepButton.rawValue, buttonAction:{
-            let sheep = sheepManager.shared
-            sheep.updateDreamDrop()
-            sheep.resetSharedInstance()
-            self.updateStatusLabel()
             self.fadeAnimation()
-            
 //            gameSceneManager.shared.transition(self, toScene: .DreamScene, transition: SKTransition.moveIn(with: .right, duration:0.5))
-
         })
         button.scaleTo(screenWithPercentage: 0.45)
         button.zPosition = 1
@@ -240,7 +234,13 @@ class TopMenu: SKScene{
             y += 1.0
             
         }
-        gameSceneManager.shared.transition(self, toScene: .DreamScene, transition: SKTransition.fade(withDuration: 1.0))
+        let sheep = sheepManager.shared
+        sheep.updateDreamDrop()
+        sheep.resetSharedInstance()
+        self.updateStatusLabel()
+        //timerでトリガーするしかない
+        
+//        gameSceneManager.shared.transition(self, toScene: .DreamScene, transition: SKTransition.fade(withDuration: 1.0))
     }
     
 //    MARK: 強化ボタン

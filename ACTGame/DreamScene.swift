@@ -11,23 +11,26 @@ import UIKit
 
 class DreamScene: SKScene {
     
-    var character : String
-    var talkSet : [String]
+    var character : String?
+    var talkSet : [String]?
     var count = 0
     var max = 0
     var textLabel = SKSpriteNode()
     
     override init(size: CGSize) {
         //        ここはセリフ管理クラスで作成
-        character = ""
-        talkSet = ["これはテストです","これはあくまでテストです"]
-        max = talkSet.count
         super.init(size: size)
-
+        let sheep = sheepManager.shared
+        self.getTalkSet(talkList: sheep.getTalkList())
         }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("Error")
+    }
+    
+    func getTalkSet(talkList: talkListStruct){
+        self.talkSet = talkList.getTalkList()
+        self.character = talkList.getCharacter()
     }
     
     var background: SKSpriteNode = {
@@ -59,7 +62,7 @@ class DreamScene: SKScene {
     lazy var fukidashi: BDButton = {
         var button = BDButton(imageNamed: "buttonback", title: "", buttonAction: {
             self.textLabel.removeAllChildren()
-            var labelText = self.talkSet[self.count]
+            var labelText = self.talkSet?[self.count]
             self.setText(text: labelText)
             self.count += 1
         })
@@ -70,7 +73,7 @@ class DreamScene: SKScene {
     
     var sheepLabel:SKLabelNode = {
         var label = SKLabelNode(fontNamed: "***")
-        label.fontSize = CGFloat.universalFont(size: 36)
+        label.fontSize = CGFloat.universalFont(size: 20)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -101,10 +104,8 @@ class DreamScene: SKScene {
         // テキストの文字数文回す
         for n in 1 ... count {
 //            if !loadingFlag { return }    // 表示途中で文字を消して、といった処理が来た時用のフラグと処理
-            
             let chara:Character = text[text.startIndex] // 一文字目を取得 Character型で返ってくる
             text.remove(at: text.startIndex)         // 一文字目をテキストから削除
-            
             if chara != "嬲" {      // 嬲 は改行用のキー文字
                 // ラベルノードの生成
                 var label: SKLabelNode = SKLabelNode(text: "\(chara)")  // "\(chara)"とすることでStringに変換
@@ -116,17 +117,13 @@ class DreamScene: SKScene {
                 label.alpha = 0.0
                 // ラベルの取り付け
                 textLabel.addChild(label)
-//                addChild(label)
                 print("adding: \(label)")
-
                 // 表示する時間をずらすためのアクションの設定
                 let delay = SKAction.wait(forDuration: TimeInterval(delayTime * strcount))  // 基本の送らせる時間に文字数を掛けることでずれを大きくする
                 let fadein = SKAction.fadeAlpha(by: 1.0, duration: 0.1)   // 不透明にするアクションの生成
                 let seq = SKAction.sequence([delay, fadein])            // 上記2つのアクションを連結
                 label.run(seq)    // 実行
-                
                 x += 1.0                // 横にずらす距離をプラス
-                
             } else {    // 改行用の処理
                 y += 1.0                // 行目をプラス
                 x = 0.0                 // 行が変わるので、横にずらす距離を初期化

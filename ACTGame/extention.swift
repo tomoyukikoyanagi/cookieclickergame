@@ -195,6 +195,24 @@ extension SKLabelNode {
   }
 }
 
+extension Array where Element: Comparable {
+    func everyElementIsLager(as other: [Element]) -> Bool {
+        var element = 0
+        if self.count == other.count {
+            for i in 0 ..< self.count {
+                if self[i] > other[i] {
+                    element += 1
+                }
+            }
+        }
+        if element <= self.count {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
 extension Notification.Name {
     static let notifyName = Notification.Name("notifyName")
     static let notifyPopup = Notification.Name("notifyPopup")

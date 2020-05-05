@@ -12,6 +12,10 @@ import UIKit
 
 let SHEEPCARDNUM:Int = 10
 
+
+   
+    
+
 class sheepManager {
     
     var sheeps : Int = 0
@@ -25,6 +29,10 @@ class sheepManager {
 //    不動変数
     var drinkPossessed : Int = 0
     var dreamDrop : Int = 0
+    var storyLevel : Int = 0
+    
+//    ひとまずご50要素
+    var dreamArray : [Int] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
     
     private init(){}
     
@@ -33,7 +41,6 @@ class sheepManager {
         sheepsPerSecond = 0
         sheepsPerTap = 0
         drinkUsed = 0
-
         sheepLevelArray = [1,0,0,0,0,0,0]
         areaLevelArray = [1,0,0,0,0]
     }
@@ -107,6 +114,16 @@ class sheepManager {
     
     func addDreamDrop(drops: Int){
         dreamDrop += drops
+    }
+    
+    func storyLevelUp(){
+        storyLevel += 1
+    }
+    
+    func getTalkList() -> talkListStruct{
+        var filteredArray : [talkListStruct]
+        filteredArray = talkListArray.filter{ $0.getBool(storyLevel: self.storyLevel, sheep: self.sheeps, drinkUsed: self.drinkUsed, sheepLevel: self.sheepLevelArray, areaLevel: self.areaLevelArray) }
+        return filteredArray[filteredArray.count - 1]
     }
 }
 
