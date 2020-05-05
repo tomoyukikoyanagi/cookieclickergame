@@ -19,6 +19,7 @@ let POPUP_ZPOSITION : CGFloat = 10
 class TopMenu: SKScene{
     var scrollView : SwiftySKScrollView?
     let moveableNode = SKNode()
+    let animationNode  = SKNode()
     var sheepCardList : [SKCard] = []
     var areaCardList : [SKCard] = []
     var itemCardList : [SKCard] = []
@@ -196,13 +197,51 @@ class TopMenu: SKScene{
             sheep.updateDreamDrop()
             sheep.resetSharedInstance()
             self.updateStatusLabel()
+            self.fadeAnimation()
             
+//            gameSceneManager.shared.transition(self, toScene: .DreamScene, transition: SKTransition.moveIn(with: .right, duration:0.5))
 
         })
         button.scaleTo(screenWithPercentage: 0.45)
         button.zPosition = 1
         return button
     }()
+    
+    func fadeAnimation(){
+        var squarecount: CGFloat = 0.0
+        let delayTime: CGFloat = 0.1
+        var x: CGFloat = 0
+        var y: CGFloat = 0
+        for j in 0...4 {
+            for i in 0...3 {
+                let width = ScreenSize.width / 4
+                let height = ScreenSize.height / 4
+                var square1 = SKSpriteNode(color: .black, size: CGSize(width: width, height: width))
+                var square2 = SKSpriteNode(color: .black, size: CGSize(width: width, height: width))
+                    
+                square1.position = CGPoint(x: -1.5 * width + width * x, y: -2 * height + width * y)
+                square2.position = CGPoint(x: width * 1.5 - width * x, y: 2 * height - width * y)
+                
+                square1.alpha = 0.0
+                square2.alpha = 0.0
+                square1.zPosition = 100
+                square2.zPosition = 100
+                animationNode.addChild(square1)
+                animationNode.addChild(square2)
+                let delay = SKAction.wait(forDuration: TimeInterval(delayTime * squarecount))
+                let fadein = SKAction.fadeAlpha(by: 1.0, duration: 1)   // 不透明にするアクションの生成
+                let seq = SKAction.sequence([delay, fadein])            // 上記2つのアクションを連結
+                x += 1.0
+                square1.run(seq)
+                square2.run(seq)// 実行
+                squarecount += 1.0
+            }
+            x = 0.0
+            y += 1.0
+            
+        }
+        gameSceneManager.shared.transition(self, toScene: .DreamScene, transition: SKTransition.fade(withDuration: 1.0))
+    }
     
 //    MARK: 強化ボタン
     lazy var powerupsButton: BDButton = {
@@ -269,6 +308,7 @@ class TopMenu: SKScene{
         addChild(popMenuBackground)
         addChild(popMenuCancelButton)
         addChild(menuChangeButton)
+        addChild(animationNode)
     }
 
     //    MARK: 強化アイテムメニュー
