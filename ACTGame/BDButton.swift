@@ -42,7 +42,7 @@ class BDButton: SKNode {
         
 //        text label will be set center
         if let titleLabel = titleLabel {
-            titleLabel.fontName = "BubbleGum"
+            titleLabel.fontName = "GenEi LateMin v2"
             titleLabel.fontSize = CGFloat.universalFont(size: 20)
             titleLabel.fontColor = SKColor.white
             titleLabel.zPosition = 1

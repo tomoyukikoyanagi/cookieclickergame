@@ -10,7 +10,7 @@ import SpriteKit
 
 class SKCard: SKNode {
     var card: SKSpriteNode
-//    var sheepImage: SKSpriteNode
+    var sheepImage: SKSpriteNode?
     private var mask: SKSpriteNode
     private var cropNode:SKCropNode
     private var action: () -> Void
@@ -20,13 +20,16 @@ class SKCard: SKNode {
     
     private var level : Int
     
+    var levelStruct : LevelStruct
+    
     var levelLabel: SKLabelNode?
     var amountLabel: SKLabelNode?
     
-    init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void ){
+    init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void , levelStruct: LevelStruct){
+        self.levelStruct = levelStruct
         level = 0
         card = SKSpriteNode(imageNamed: "card.png")
-//        sheepImage = SKSpriteNode(imageNamed: imageNamed)
+        sheepImage = SKSpriteNode(imageNamed: imageNamed)
         levelLabel = SKLabelNode(text: "Lv.\(level)")
         amountLabel = SKLabelNode(text: amountTitle)
         title = buttonTitle ?? " "
@@ -61,6 +64,9 @@ class SKCard: SKNode {
     
     func setupNodes() {
         card.zPosition = 0
+        if let sheepImage = sheepImage {
+            sheepImage.position = CGPoint(x:0, y:0)
+        }
         if let levelLabel = levelLabel {
             setupLabel(label: levelLabel)
             levelLabel.position = CGPoint(x:-55, y: 118)
@@ -76,7 +82,7 @@ class SKCard: SKNode {
     }
     
     func setupLabel(label: SKLabelNode){
-        label.fontName = "****"
+        label.fontName = "GenEi LateMin v2"
         label.fontSize = CGFloat.universalFont(size: 20)
         label.fontColor = SKColor.white
         label.zPosition = 1
@@ -84,6 +90,9 @@ class SKCard: SKNode {
     
     func addNodes() {
         addChild(card)
+        if let sheepImage = sheepImage {
+            addChild(sheepImage)
+        }
         if let levelLabel = levelLabel {
             addChild(levelLabel)
         }
@@ -176,8 +185,6 @@ class SKCard: SKNode {
          card = SKSpriteNode(imageNamed: imageNamed)
     }
     
-    
-    
     func getPrice() -> Int{
         let price = purchaseButton.titleLabel?.text ?? "0"
         return Int(price) ?? 0
@@ -199,11 +206,22 @@ class SKCard: SKNode {
     func updateButtonLabel(addLevel: Int){
         level += addLevel
         levelLabel?.text = "Lv.\(level)"
-        amountLabel?.text = "\(coridale.addSPS[level - 1])"
-        purchaseButton.setTitle(title: "\(coridale.price[level - 1])")
-        if level == 10{
-            purchaseButton.setTitle(title: "レベル最大")
+        if levelStruct.type != .item {
+            let amount = levelStruct.amount?[level] ?? 0
+            amountLabel?.text = "\(amount)"
+            purchaseButton.setTitle(title: "\(amount)")
         }
+        if level == 10{
+        purchaseButton.setTitle(title: "レベル最大")
+        }
+    }
+    
+    func getLevel() -> Int {
+        return self.level
+    }
+    
+    func getLevelStruct() -> LevelStruct {
+        return self.levelStruct
     }
 }
 

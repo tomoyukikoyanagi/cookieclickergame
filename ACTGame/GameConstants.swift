@@ -9,38 +9,134 @@
 import Foundation
 
 enum sheepName : String{
-    case coridale =  "coridale"
+    case corriedale =  "corriedale"
     case suffolk = "suffolk"
-    case melino = "melino"
-    case sheep4 = "***"
-    case sheep5 = "****"
-    case sheep6 = "*****"
-    case sheep7 = "******"
+    case merino = "merino"
+    case lincoln = "lincoln"
+    case valleyblacknose = "valleyblacknose"
+    case karacul = "karacul"
+    case jacob = "jacob"
 }
 
-let sheepNameArray : [sheepName] = [sheepName.coridale, sheepName.suffolk, sheepName.melino, sheepName.sheep4, sheepName.sheep5, sheepName.sheep6, sheepName.sheep7]
-
-let sheepCardName : [String] = ["card1.png","card2.png","card0.png","card0.png","card0.png","card0.png","card0.png","card0.png"]
-
-
-struct coridale {
-    static let addSPS = [1,2,3,4,5,6,7,8,9,10]
-    static let price = [20,200,2000,20000,200000,2000000,7,8,9,10]
+enum areaName : String {
+    case farm = "farm"
+    case mountain = "mountain"
+    case city = "city"
+    case moon = "moon"
+    case galaxy = "galaxy"
 }
 
-func getSPSStruct(sheep: sheepName) ->[Int]{
-    if sheep == sheepName.coridale {
-        return coridale.addSPS
-    } else {
-        return [1,2,3,4,5,6,7,8,9,10]
+enum itemName : String {
+    case drink = "drink"
+    case dog = "dog"
+    case wolf = "wolf"
+}
+
+let sheepNameArray : [sheepName] = [sheepName.corriedale, sheepName.suffolk, sheepName.merino, sheepName.lincoln, sheepName.valleyblacknose, sheepName.karacul, sheepName.jacob]
+let areaNameArray : [areaName] = [areaName.farm, areaName.mountain, areaName.city, areaName.moon, areaName.galaxy]
+let itemNameArray : [itemName] = [itemName.drink, itemName.dog, itemName.wolf]
+
+let sheepCardName : [String] = ["corriedale.png","suffolk.png","merino.png","lincoln.png","valleyblacknose.png","karacul.png","jacob.png"]
+let areaCardName : [String] = ["farm.png", "mountain.png","city.png","moon.png","universe.png",]
+let itemCardName : [String] = ["drink.png","dog.png","flute.png",]
+let sheepImageName : [String] = ["test.png","test.png","test.png","test.png","test.png","test.png","test.png"]
+let bgImageName : [String] = ["background0.png","background1.png","background2.png","background3.png","background4.png",]
+
+
+struct LevelStruct {
+    var amount : [Int]? = nil
+    var price : [Int]
+    var type : gameSceneManager.purchaseType
+    var imageName : String? = nil
+    
+    init (price: [Int]){
+        self.price = price
+        self.type = .item
+    }
+    
+    init (amount: [Int], price: [Int], type: gameSceneManager.purchaseType, image: String){
+        self.amount = amount
+        self.price = price
+        self.type = type
+        self.imageName = image
     }
 }
 
-func getPriceStruct(sheep: sheepName) -> [Int]{
-    if sheep == sheepName.coridale {
-        return coridale.price
+let corriedale : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price:[0,20,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[0])
+
+let suffolk : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[1])
+
+let merino : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[2] )
+
+let lincoln : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[3])
+
+let valleyblacknose: LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[4])
+
+let karacul : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[5])
+
+let jacob : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price: [10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000], type: .sheep, image: sheepImageName[6])
+
+let farm : LevelStruct = LevelStruct(amount: [0,1,2,3,4,5,6,7,8,9,10], price: [0,10,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[0])
+
+let mountain : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[1])
+
+let city : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[2])
+
+let moon : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[3])
+
+let galaxy : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[4])
+
+let drink : LevelStruct = LevelStruct(price: [10])
+
+let dog : LevelStruct = LevelStruct(price: [10])
+
+let wolf : LevelStruct = LevelStruct(price: [10])
+
+func getLevelStruct(type: gameSceneManager.purchaseType, no: Int) -> LevelStruct{
+    if type == gameSceneManager.purchaseType.sheep{
+        switch no {
+        case 0:
+            return corriedale
+        case 1:
+             return suffolk
+        case 2:
+            return merino
+        case 3:
+            return lincoln
+        case 4:
+            return valleyblacknose
+        case 5:
+            return karacul
+        case 6:
+            return jacob
+        default:
+            return LevelStruct(amount: [0,0,0,0,0,0,0], price: [0,0,0,0,0,0,0], type: .sheep, image: sheepImageName[0])
+        }
+    }else if type == gameSceneManager.purchaseType.area{
+        switch no {
+        case 0:
+            return farm
+        case 1:
+             return mountain
+        case 2:
+            return city
+        case 3:
+            return moon
+        case 4:
+            return galaxy
+        default:
+            return LevelStruct(amount: [0,0,0,0,0], price: [0,0,0,0,0], type: .area, image: bgImageName[0])
+        }
     } else {
-        return [0,0,0,0,0,0,0,0,0,0]
+        switch no {
+        case 0:
+            return drink
+        case 1:
+            return dog
+        case 2:
+            return wolf
+        default:
+            return LevelStruct(price: [0])
+        }
     }
 }
-

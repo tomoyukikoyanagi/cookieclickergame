@@ -20,6 +20,8 @@ class TopMenu: SKScene{
     var scrollView : SwiftySKScrollView?
     let moveableNode = SKNode()
     var sheepCardList : [SKCard] = []
+    var areaCardList : [SKCard] = []
+    var itemCardList : [SKCard] = []
     
     private var sheepWalkingFrames: [SKTexture] = []
     private var currentSheepNumber = 0
@@ -34,6 +36,8 @@ class TopMenu: SKScene{
     override init(size: CGSize) {
         super.init(size: size)
         NotificationCenter.default.addObserver(self, selector: #selector(updateSPS(notification:)), name: .notifyName, object: nil)
+        let sheep = sheepManager.shared
+        sheep.updateSPT()
         }
     
     required init?(coder aDecoder: NSCoder) {
@@ -189,8 +193,11 @@ class TopMenu: SKScene{
     lazy var sleepButton: BDButton = {
         var button = BDButton(imageNamed: gameSceneManager.ImageName.sleepButton.rawValue, buttonAction:{
             let sheep = sheepManager.shared
-            sheep.increaseSPS(amount: 1)
+            sheep.updateDreamDrop()
+            sheep.resetSharedInstance()
             self.updateStatusLabel()
+            gameSceneManager.shared.transition(self, toScene:.DreamScene, transition: SKTransition.moveIn(with: .right, duration: 0.5))
+
         })
         button.scaleTo(screenWithPercentage: 0.45)
         button.zPosition = 1
@@ -264,15 +271,11 @@ class TopMenu: SKScene{
         addChild(menuChangeButton)
     }
 
-    
-    
-    
-    
-    
     //    MARK: 強化アイテムメニュー
         lazy var popMenuBackground : SKSpriteNode =  {
             let sprite = SKSpriteNode(imageNamed: gameSceneManager.ImageName.popmenuBackground1.rawValue)
             sprite.scaleTo(screenWidthPercentage: 1.1)
+            
             sprite.zPosition = 2
             return sprite
         }()
@@ -315,10 +318,11 @@ class TopMenu: SKScene{
         lazy var menuChangeButton : SKSpriteNode = {
             let sprite = SKSpriteNode()
             let imageNameArray : [String] = [gameSceneManager.ImageName.popmenuBackground1.rawValue, gameSceneManager.ImageName.popmenuBackground2.rawValue, gameSceneManager.ImageName.popmenuBackground3.rawValue]
-            var x_position = 0
+            var x_position = -37
             let y_position = 0
+            
             for i in 0...2 {
-                var button = BDButton(imageNamed: "buttonplay.png" , buttonAction:{
+                var button = BDButton(imageNamed: "buttonarea.png" , buttonAction:{
                     for j in 0...self.scrollViewArray.count - 1 {
                         if i == j {
                             self.scrollViewArray[j].zPosition = 3
@@ -327,12 +331,20 @@ class TopMenu: SKScene{
                         }
                     }
                     self.popMenuBackground.texture = SKTexture(imageNamed: imageNameArray[i])
+                    if i == 0 {
+                        self.scrollView?.contentSize = CGSize(width: self.scrollView!.frame.width * 4, height: self.scrollView!.frame.height / 4)
+                    } else if i == 1 {
+                        self.scrollView?.contentSize = CGSize(width: self.scrollView!.frame.width * 3, height: self.scrollView!.frame.height / 4)
+                    } else {
+                        self.scrollView?.contentSize = CGSize(width: self.scrollView!.frame.width * 2, height: self.scrollView!.frame.height / 4)
+                    }
                 })
                 button.position = CGPoint(x: x_position, y: y_position)
                 button.scaleTo(screenWithPercentage: 0.20)
+                button.alpha = 0.01
                 button.zPosition = 3
                 sprite.addChild(button)
-                x_position += 50
+                x_position += 80
             }
             return sprite
         }()
@@ -340,8 +352,8 @@ class TopMenu: SKScene{
         func addMovableNode() {
             moveableNode.zPosition = 2
             scrollView = SwiftySKScrollView(frame: CGRect(x:0, y:  ScreenSize.height * 5 / 8, width: ScreenSize.width, height: ScreenSize.height / 4), moveableNode: moveableNode, direction: .horizontal)
-            scrollView?.contentSize = CGSize(width: scrollView!.frame.width * 3, height: scrollView!.frame.height / 4)
-            scrollView?.setContentOffset(CGPoint(x: 0 + scrollView!.frame.width * 3, y: 0), animated: true)
+            scrollView?.contentSize = CGSize(width: scrollView!.frame.width * 4, height: scrollView!.frame.height / 4)
+//            scrollView?.setContentOffset(CGPoint(x: scrollView!.frame.width * 4, y: 0), animated: true)
             view?.addSubview(scrollView!)
             scrollView?.isDisabled = true
             guard let scrollView = scrollView else { return } // unwrap  optional
@@ -350,83 +362,176 @@ class TopMenu: SKScene{
             addScrollView(scrollView: scrollView, zposition: -1, num: 2)
         }
         
-        var scrollViewArray : [SKSpriteNode] = []
+    var scrollViewArray : [SKSpriteNode] = []
         
     func addScrollView(scrollView: SwiftySKScrollView, zposition : CGFloat, num: Int) {
             let page1ScrollView = SKSpriteNode(color: .clear, size: CGSize(width: scrollView.frame.width, height: scrollView.frame.size.height / 2))
-            page1ScrollView.position = CGPoint(x: frame.midX - (scrollView.frame.width * 2), y: 0 * frame.midY - 3 * (scrollView.frame.height))
+            page1ScrollView.position = CGPoint(x: frame.midX - (scrollView.frame.width * 3), y: 0 * frame.midY - 3 * (scrollView.frame.height))
             moveableNode.addChild(page1ScrollView)
             page1ScrollView.zPosition = zposition
         switch num {
-        case 0:
-            setCard1(scrollView: page1ScrollView)
-        case 1:
-            print("123")
-        case 2:
-            print("23")
-        default:
-            print("3")
-        }
+            case 0:
+                setSheepCard(scrollView: page1ScrollView)
+            case 1:
+                setAreaCard(scrollView: page1ScrollView)
+            case 2:
+                setItemCard(scrollView: page1ScrollView)
+            default:
+                print("3")
+            }
             scrollViewArray.append(page1ScrollView)
         }
         
-        func setCard1(scrollView: SKSpriteNode){
-            var x_position = -50
-            let y_position = -30
-            
-            for i in 0 ... 6 {
-                let card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(getSPSStruct(sheep: sheepNameArray[i])[0])" , buttonTitle: "\(getPriceStruct(sheep: sheepNameArray[i])[0])", buttonAction: {
-                    self.addPopup(cardNo: i)
-                })
-                if i == 0{
-                    card.enable()
-                } else {
-                    card.disable()
-                }
-                card.position = CGPoint(x: x_position, y: y_position)
-                card.scaleTo(screenWithPercentage: 0.45)
-                scrollView.addChild(card)
-                x_position += 200
-                self.sheepCardList.append(card)
+    func setSheepCard(scrollView: SKSpriteNode){
+        var x_position = 1200
+        let y_position = -30
+        for i in 0 ... 6 {
+            let sheepStruct = getLevelStruct(type: .sheep, no: i)
+            let card = SKCard(imageNamed: sheepCardName[i], amountTitle: "\(sheepStruct.amount?[0] ?? 0)" , buttonTitle: "\(sheepStruct.price[0])", buttonAction: {
+                self.addPopup(cardNo: i, type: gameSceneManager.purchaseType.sheep, cardList: self.sheepCardList)
+            }, levelStruct: sheepStruct)
+            if i == 0{
+                card.enable()
+                card.updateButtonLabel(addLevel: 1)
+            } else {
+                card.disable()
             }
+            card.position = CGPoint(x: x_position, y: y_position)
+            card.scaleTo(screenWithPercentage: 0.45)
+            scrollView.addChild(card)
+            x_position -= 200
+            self.sheepCardList.append(card)
         }
+    }
     
-    func addPopup(cardNo: Int){
+    func setAreaCard(scrollView: SKSpriteNode){
+        var x_position = 1200
+        let y_position = -30
+        for i in 0 ... 4 {
+            let areaStruct = getLevelStruct(type: .area, no: i)
+            let card = SKCard(imageNamed: areaCardName[i], amountTitle: "\(areaStruct.amount?[0] ?? 0)" , buttonTitle: "\(areaStruct.price[0])", buttonAction: {
+                self.addPopup(cardNo: i, type: gameSceneManager.purchaseType.area, cardList: self.areaCardList)
+            }, levelStruct: areaStruct)
+            if i == 0{
+                card.enable()
+                card.updateButtonLabel(addLevel: 1)
+            } else {
+                card.disable()
+            }
+            card.position = CGPoint(x: x_position, y: y_position)
+            card.scaleTo(screenWithPercentage: 0.45)
+            scrollView.addChild(card)
+            x_position -= 200
+            self.areaCardList.append(card)
+        }
+    }
+    
+    func setItemCard(scrollView: SKSpriteNode){
+        var x_position = 1200
+        let y_position = -30
+        for i in 0 ... 2 {
+            let itemStruct = getLevelStruct(type: .item, no: i)
+            let card = SKCard(imageNamed: itemCardName[i], amountTitle: " " , buttonTitle: "\(itemStruct.price[0] ))", buttonAction: {
+                self.addPopup(cardNo: i, type: gameSceneManager.purchaseType.item, cardList: self.itemCardList)
+            },levelStruct: itemStruct)
+            if i == 0{
+                card.enable()
+            } else {
+                card.disable()
+            }
+            card.position = CGPoint(x: x_position, y: y_position)
+            card.scaleTo(screenWithPercentage: 0.45)
+            scrollView.addChild(card)
+            x_position -= 200
+            self.itemCardList.append(card)
+        }
+    }
+    
+    func addPopup(cardNo: Int, type: gameSceneManager.purchaseType, cardList: [SKCard]){
         let sheep = sheepManager.shared
-        if sheep.sheeps < sheepCardList[cardNo].getPrice(){
+        if sheep.sheeps < cardList[cardNo].getPrice(){
             scrollView?.isDisabled = true
-        let popup = PurchasePopUpMenu1(buttonAction: {
-            self.scrollView?.isDisabled = false
-        })
-            popup.zPosition = POPUP_ZPOSITION
-            
-            addChild(popup)
+            if type == .sheep || type == .item {
+                let popup = PurchasePopUpMenu1(buttonAction: {
+                    self.scrollView?.isDisabled = false
+                })
+                popup.zPosition = POPUP_ZPOSITION
+                addChild(popup)
+            } else {
+                let popup = ChangeBackgroundMenu(changeBackground: {
+                    guard let imgName = cardList[cardNo].getLevelStruct().imageName else {return}
+                    self.background.texture = SKTexture(imageNamed: imgName)
+                    self.scrollView?.isDisabled = false
+                    
+                }, cancelAction: {
+                    self.scrollView?.isDisabled = false
+                })
+                popup.zPosition = POPUP_ZPOSITION
+                addChild(popup)
+            }
         } else {
             scrollView?.isDisabled = true
-            let popup = PurchasePopUpMenu2(cancelAction: {
-                        self.scrollView?.isDisabled = false
-                           }, purchaseAction: {
-                               self.scrollView?.isDisabled = false
-                               self.updateCard(cardNo: cardNo)
-                           })
-            popup.zPosition = POPUP_ZPOSITION
-            addChild(popup)
+            if type == .area {
+                let popup = PurchaseBackgroundMenu(cancelAction: {
+                            self.scrollView?.isDisabled = false
+                               }, purchaseAction: {
+                                   self.scrollView?.isDisabled = false
+                                self.updateCard(cardNo: cardNo, type: type)
+                }, changeBackground: {
+                    
+                })
+                popup.zPosition = POPUP_ZPOSITION
+                addChild(popup)
+            } else {
+                let popup = PurchasePopUpMenu2(cancelAction: {
+                            self.scrollView?.isDisabled = false
+                               }, purchaseAction: {
+                                   self.scrollView?.isDisabled = false
+                                self.updateCard(cardNo: cardNo, type: type)
+                               })
+                popup.zPosition = POPUP_ZPOSITION
+                addChild(popup)
+            }
         }
-        
     }
 
-        func updateCard(cardNo: Int){
-//            お金がなかった場合の処理をここに書き下す
-            let sheep = sheepManager.shared
-            sheep.sheeps -= sheepCardList[cardNo].getPrice()
+    func updateCard(cardNo: Int, type: gameSceneManager.purchaseType){
+        let sheep = sheepManager.shared
+        if type == gameSceneManager.purchaseType.sheep{
+//            購入処理
+        sheep.sheeps -= sheepCardList[cardNo].getPrice()
+//            レベル処理
             if cardNo < self.sheepCardList.count{
                 self.sheepCardList[cardNo + 1].enable()
                 self.sheepCardList[cardNo].updateButtonLabel(addLevel: 1)
-            }
-            sheep.sheepLevel[cardNo] += 1
-            sheep.updateSPT()
-            self.updateLabels()
-            print("cardPressed")
         }
+//            レベルあっぷ処理
+                sheep.sheepLevelArray[cardNo] += 1
+        } else if type == gameSceneManager.purchaseType.area{
+            sheep.sheeps -= areaCardList[cardNo].getPrice()
+            if cardNo < self.areaCardList.count{
+                    self.areaCardList[cardNo + 1].enable()
+                    self.areaCardList[cardNo].updateButtonLabel(addLevel: 1)
+            }
+            sheep.areaLevelArray[cardNo] += 1
+        } else if type == gameSceneManager.purchaseType.item{
+            sheep.sheeps -= itemCardList[cardNo].getPrice()
+            if cardNo < self.areaCardList.count{
+//                    self.areaCardList[cardNo + 1].enable()
+            }
+        }
+        var array1 : [Int] = []
+        var array2 : [Int] = []
+        for i in 0 ... sheepCardList.count - 1 {
+            array1.append(sheepCardList[i].getLevel())
+        }
+        for j in 0 ... areaCardList.count - 1 {
+            array2.append(areaCardList[j].getLevel())
+        }
+        sheep.updateSPT()
+        sheep.updateSPS()
+        self.updateLabels()
+        print("cardPressed")
+    }
 }
 

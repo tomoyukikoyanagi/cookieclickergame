@@ -198,4 +198,5 @@ extension SKLabelNode {
 extension Notification.Name {
     static let notifyName = Notification.Name("notifyName")
     static let notifyPopup = Notification.Name("notifyPopup")
+    static let notifyFukidashi = Notification.Name("notifyFukidashi")
 }
