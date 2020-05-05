@@ -22,5 +22,20 @@
             </objects>
             <point key="canvasLocation" x="46" y="38"/>
         </scene>
+        <!--Dream Scene View Controller-->
+        <scene sceneID="8lS-mq-Tm4">
+            <objects>
+                <viewController id="YMw-54-meE" customClass="DreamSceneViewController" customModule="Donut" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="16a-H6-QOb">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="d8I-s3-u7o"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="gCY-Bs-2rs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="972" y="38"/>
+        </scene>
     </scenes>
 </document>

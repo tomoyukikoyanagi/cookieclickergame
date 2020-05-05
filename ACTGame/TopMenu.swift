@@ -196,7 +196,7 @@ class TopMenu: SKScene{
             sheep.updateDreamDrop()
             sheep.resetSharedInstance()
             self.updateStatusLabel()
-            gameSceneManager.shared.transition(self, toScene:.DreamScene, transition: SKTransition.moveIn(with: .right, duration: 0.5))
+            
 
         })
         button.scaleTo(screenWithPercentage: 0.45)
