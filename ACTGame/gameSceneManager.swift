@@ -24,12 +24,20 @@ class sheepManager {
     var drinkUsed : Int = 0
 //        羊の種類に応じた選択肢
     var sheepLevelArray : [Int] = [1,0,0,0,0,0,0]
-    var areaLevelArray : [Int] = [1,0,0,0,0]
+    var areaLevelArray : [Int] = [0,0,0,0,0]
     static var shared = sheepManager()
+    
+    var drinkMode = false
+    
 //    不動変数
-    var drinkPossessed : Int = 0
-    var dreamDrop : Int = 0
+    var drinkPossessed : Int = 1
+    var dreamFragment : Int = 10
     var storyLevel : Int = 0
+    
+    var currentAreaNo : Int = 0
+    
+    
+    
     
 //    ひとまずご50要素
     var dreamArray : [Int] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
@@ -42,12 +50,12 @@ class sheepManager {
         sheepsPerTap = 0
         drinkUsed = 0
         sheepLevelArray = [1,0,0,0,0,0,0]
-        areaLevelArray = [1,0,0,0,0]
+        areaLevelArray = [0,0,0,0,0]
+        drinkMode = false
     }
     
     func addSPT() {
         sheeps += sheepsPerTap
-        print("sheeps: \(sheeps)")
     }
     
     func decreaseSheep(amount : Int) {
@@ -56,7 +64,6 @@ class sheepManager {
     
     func addSPS() {
         sheeps += sheepsPerSecond
-        print("sheeps: \(sheeps)")
     }
 
     func increaseSPT(amount: Int){
@@ -64,8 +71,13 @@ class sheepManager {
     }
     
     func updateSPT() {
+        sheepsPerTap = 0
         for i in 0 ... 6{
-            sheepsPerTap += (corriedale.amount?[i])! * sheepLevelArray[i]
+            guard let levelStruct = getLevelStruct(type: .sheep, no:i).amount else {return}
+            sheepsPerTap += levelStruct[sheepLevelArray[i]]
+        }
+        if drinkMode == true {
+            sheepsPerTap *= 2
         }
     }
     
@@ -73,10 +85,16 @@ class sheepManager {
         sheepsPerSecond += amount
     }
     
-    func updateSPS() {
-        for i in 0 ... 4{
-            sheepsPerSecond += areaLevelArray[i]
+    func changeCurrentArea(areaNo : Int){
+        if  areaNo < areaLevelArray.count {
+            currentAreaNo = areaNo
         }
+    }
+    
+    func updateSPS() {
+        let spsArray = getLevelStruct(type: .area, no: currentAreaNo).amount
+        let level = areaLevelArray[currentAreaNo]
+        sheepsPerSecond = spsArray?[level] ?? 0
     }
     
     func updateSPS(sps : Int){
@@ -94,26 +112,26 @@ class sheepManager {
         }
     }
     
-    func addDrink(drinkcount: Int){
+    func addDrink(){
         drinkPossessed += 1
     }
     
-    func useDrink(drinkcount: Int){
+    func useDrink(){
         drinkPossessed -= 1
         drinkUsed += 1
     }
     
-    func updateDreamDrop(){
-        addDreamDrop(drops: exchangeSheepToDrop(sheeps: sheeps))
+    func updateDreamFragment(){
+        addDreamFragment(df: exchangeSheepToFragment(sheeps: sheeps))
     }
     
-    func exchangeSheepToDrop(sheeps: Int) -> Int{
+    func exchangeSheepToFragment(sheeps: Int) -> Int{
         var drops : Int = sheeps / 100
         return drops
     }
     
-    func addDreamDrop(drops: Int){
-        dreamDrop += drops
+    func addDreamFragment(df: Int){
+        dreamFragment += df
     }
     
     func storyLevelUp(){
@@ -124,6 +142,14 @@ class sheepManager {
         var filteredArray : [talkListStruct]
         filteredArray = talkListArray.filter{ $0.getBool(storyLevel: self.storyLevel, sheep: self.sheeps, drinkUsed: self.drinkUsed, sheepLevel: self.sheepLevelArray, areaLevel: self.areaLevelArray) }
         return filteredArray[filteredArray.count - 1]
+    }
+    
+    func endDrinkMode() {
+        drinkMode = false
+    }
+    
+    func startDrinkMode(){
+        drinkMode = true
     }
 }
 
@@ -160,6 +186,9 @@ class gameSceneManager {
         case popmenuBackground1 = "popmenu1.png"
         case popmenuBackground2 = "popmenu2.png"
         case popmenuBackground3 = "popmenu3.png"
+        case dreamFragmentLogo = "dreamDrop.png"
+        case spsLogo = "spsLogo.png"
+        case sptLogo = "sptLogo.png"
     
         case popmenuCancelButton = "popmenu_cancel.png"
         
@@ -206,7 +235,6 @@ class gameSceneManager {
 //    case SceneType.Dairy:
 //        return Dairy(size: CGSize(width: ScreenSize.width, height:ScreenSize.height))
     case SceneType.DreamScene:
-
         return DreamScene(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
 
     case .Dairy:

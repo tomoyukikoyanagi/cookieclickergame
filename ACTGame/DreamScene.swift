@@ -8,6 +8,7 @@
 
 import SpriteKit
 import UIKit
+import SKTextureGradient
 
 class DreamScene: SKScene {
     
@@ -29,57 +30,63 @@ class DreamScene: SKScene {
     }
     
     func getTalkSet(talkList: talkListStruct){
+        self.count = 0
         self.talkSet = talkList.getTalkList()
         self.character = talkList.getCharacter()
+        self.max = talkList.getTalkList().count
     }
     
     var background: SKSpriteNode = {
-           var sprite = SKSpriteNode(imageNamed: "***")
+        let texture = SKTexture(size: CGSize(width: ScreenSize.width, height: ScreenSize.height), color1: CIColor.gray, color2: CIColor.black, direction: GradientDirection.up)
+        var sprite = SKSpriteNode(texture: texture)
            if DeviceType.isiPad || DeviceType.isiPadPro {
-               sprite.scaleTo(screenWidthPercentage: 1.0)
+//               sprite.scaleTo(screenWidthPercentage: 1.0)
            } else {
-               sprite.scaleTo(screenHeightPercentage: 1.0)
+//               sprite.scaleTo(screenHeightPercentage: 1.0)
            }
            sprite.zPosition = 0
            return sprite
-           }()
-    
-    lazy var backButton: BDButton = {
-            var button = BDButton(imageNamed: "", title: "Back", buttonAction: {
-                gameSceneManager.shared.transition(self, toScene:.TopMenu, transition: SKTransition.moveIn(with: .right, duration: 0.5))
-
-            })
-            button.zPosition = 1
-            button.scaleTo(screenWithPercentage: 0.25)
-            return button
         }()
+    
+
+    
+//    lazy var backButton: BDButton = {
+//            var button = BDButton(imageNamed: "", title: "Back", buttonAction: {
+//                gameSceneManager.shared.transition(self, toScene:.TopMenu, transition: SKTransition.moveIn(with: .right, duration: 0.5))
+//            })
+//        button.zPosition = Layers.background
+//            button.scaleTo(screenWithPercentage: 0.25)
+//            return button
+//        }()
     
     var characterNode: SKSpriteNode = {
         var character = SKSpriteNode(imageNamed: "character")
+        character.zPosition = Layers.character
         return character
     }()
    
     lazy var fukidashi: BDButton = {
-        var button = BDButton(imageNamed: "buttonback", title: "", buttonAction: {
-            self.textLabel.removeAllChildren()
-            var labelText = self.talkSet?[self.count]
-            self.setText(text: labelText)
-            self.count += 1
+        var button = BDButton(imageNamed: "pop.png", title: "", buttonAction: {
+            if self.count >= self.max - 1 {
+                gameSceneManager.shared.transition(self, toScene:.TopMenu, transition: SKTransition.fade(withDuration: 3.0))
+            } else {
+                self.textLabel.removeAllChildren()
+                var labelText = self.talkSet?[self.count]
+                self.setText(text: labelText)
+                self.count += 1
+            }
         })
-        button.zPosition = 1
-        button.scaleTo(screenWithPercentage: 0.25)
+        button.zPosition = Layers.fukidashi
+        button.scaleTo(screenWithPercentage: 1.0)
+        button.alpha = 0.0
         return button
     }()
     
-    var sheepLabel:SKLabelNode = {
-        var label = SKLabelNode(fontNamed: "***")
-        label.fontSize = CGFloat.universalFont(size: 20)
-        label.zPosition = 2
-        label.color = SKColor.white
-        label.horizontalAlignmentMode = .center
-        label.verticalAlignmentMode = .center
-        label.text = "羊が0000匹"
-        return label
+    lazy var emitter: SKEmitterNode = {
+        let emitter = SKEmitterNode(fileNamed: "SnowParticle.sks")!
+        emitter.zPosition = Layers.emitter
+        
+    return emitter
     }()
     
     override func didMove(to view: SKView) {
@@ -90,7 +97,7 @@ class DreamScene: SKScene {
     }
     
     func setText(text: String!){
-        let fontSize: CGFloat = 24.0    // フォントサイズ
+        let fontSize: CGFloat = 17.0    // フォントサイズ
         // テキストを文字送りするのに必要そうな変数
         var text: String = text         // 引数で貰ったテキストを格納
         let count = text.count // テキストの文字数取得
@@ -110,9 +117,12 @@ class DreamScene: SKScene {
                 // ラベルノードの生成
                 var label: SKLabelNode = SKLabelNode(text: "\(chara)")  // "\(chara)"とすることでStringに変換
                 // フォントサイズ指定
+                label.fontName = UniversalFontName
                 label.fontSize = fontSize
+                label.fontColor = .black
+                label.zPosition = Layers.text
                 // 文字の位置設定
-                label.position = CGPoint(x: -1 * ScreenSize.width / 4  + fontSize * x + fontSize, y: (y * fontSize) - fontSize)
+                label.position = CGPoint(x: -1 * ScreenSize.width / 2  + fontSize * x + fontSize, y: (y * fontSize) - fontSize)
                 // 透明度の設定(初期は透明なので0.0)
                 label.alpha = 0.0
                 // ラベルの取り付け
@@ -135,17 +145,35 @@ class DreamScene: SKScene {
     func setupNodes() {
         background.position = CGPoint.zero
         fukidashi.position = CGPoint(x:ScreenSize.width * 0.0, y: ScreenSize.height * 0.25)
-        backButton.position = CGPoint(x: ScreenSize.width * -0.35, y :ScreenSize.height * 0.40)
+//        backButton.position = CGPoint(x: ScreenSize.width * -0.35, y :ScreenSize.height * 0.40)
         textLabel.position = CGPoint(x:ScreenSize.width * 0.0, y: ScreenSize.height * 0.25)
+        emitter.position = CGPoint(x:ScreenSize.width * 0.0 , y:ScreenSize.height * 0.5)
+        
     }
     
     func addNodes() {
         addChild(background)
-        addChild(backButton)
+//        addChild(backButton)
         addChild(fukidashi)
         addChild(textLabel)
+        addChild(emitter)
+        let delay = SKAction.wait(forDuration: TimeInterval(1.0))
+        let fadein = SKAction.fadeAlpha(by: 1.0, duration: 1.0)
+        let seq = SKAction.sequence([delay, fadein])
+        fukidashi.run(seq)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0, execute: {
+            var labelText = self.talkSet?[self.count]
+            self.setText(text: labelText)
+            self.count += 1
+        })
+        
     }
-    
-    
 }
 
+struct Layers {
+    static let background : CGFloat = 0
+    static let emitter : CGFloat = 1
+    static let fukidashi : CGFloat = 2
+    static let text : CGFloat = 3
+    static let character : CGFloat = 4
+}

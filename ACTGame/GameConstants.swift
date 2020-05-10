@@ -33,14 +33,21 @@ enum itemName : String {
 }
 
 let sheepNameArray : [sheepName] = [sheepName.corriedale, sheepName.suffolk, sheepName.merino, sheepName.lincoln, sheepName.valleyblacknose, sheepName.karacul, sheepName.jacob]
+let sheepNameArrayJp : [String] = ["コリデール","サフォーク","メリノ","リンカーン","ヴァレーブラックノーズ","カラクール ","ヤコブ"]
 let areaNameArray : [areaName] = [areaName.farm, areaName.mountain, areaName.city, areaName.moon, areaName.galaxy]
+let areaNameArrayJp : [String] = ["農場","山","都市","月","宇宙"]
+
 let itemNameArray : [itemName] = [itemName.drink, itemName.dog, itemName.wolf]
+let itemNameArrayJp : [String] = ["栄養ドリンク","牧羊犬", "オオカミを呼ぶ笛"]
 
 let sheepCardName : [String] = ["corriedale.png","suffolk.png","merino.png","lincoln.png","valleyblacknose.png","karacul.png","jacob.png"]
 let areaCardName : [String] = ["farm.png", "mountain.png","city.png","moon.png","universe.png",]
 let itemCardName : [String] = ["drink.png","dog.png","flute.png",]
 let sheepImageName : [String] = ["test.png","test.png","test.png","test.png","test.png","test.png","test.png"]
-let bgImageName : [String] = ["background0.png","background1.png","background2.png","background3.png","background4.png",]
+let bgImageName : [String] = ["area1.png","area2.png","area2.png","area3.png","area4.png",]
+
+let drinkModeMultiplier = 10
+let drinkModeTime = 10.0
 
 
 struct LevelStruct {
@@ -62,29 +69,29 @@ struct LevelStruct {
     }
 }
 
-let corriedale : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price:[0,20,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[0])
+let corriedale : LevelStruct = LevelStruct(amount: [0,1,2,3,4,5,6,7,8,9,10], price:[0,0,2,5,2,20,20,7,8,9,10,10], type: .sheep, image: sheepImageName[0])
 
-let suffolk : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[1])
+let suffolk : LevelStruct = LevelStruct(amount: [0,2,3,4,5,6,7,8,9,10], price:[2000,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[1])
 
-let merino : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[2] )
+let merino : LevelStruct = LevelStruct(amount: [0,200,300,400,500,600,700,800,900,1000], price:[20000,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[2] )
 
-let lincoln : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[3])
+let lincoln : LevelStruct = LevelStruct(amount: [0,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[3])
 
-let valleyblacknose: LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[4])
+let valleyblacknose: LevelStruct = LevelStruct(amount: [0,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[4])
 
-let karacul : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price:[20,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[5])
+let karacul : LevelStruct = LevelStruct(amount: [0,200,300,400,500,600,700,800,900,1000], price:[2000,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[5])
 
-let jacob : LevelStruct = LevelStruct(amount: [100,200,300,400,500,600,700,800,900,1000], price: [10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000], type: .sheep, image: sheepImageName[6])
+let jacob : LevelStruct = LevelStruct(amount: [0,200,300,400,500,600,700,800,900,1000], price: [10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000], type: .sheep, image: sheepImageName[6])
 
-let farm : LevelStruct = LevelStruct(amount: [0,1,2,3,4,5,6,7,8,9,10], price: [0,10,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[0])
+let farm : LevelStruct = LevelStruct(amount: [0,0,1,1,1,2,2,2,2,2,2,2], price: [0,1000,10000,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[0])
 
-let mountain : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[1])
+let mountain : LevelStruct = LevelStruct(amount: [0,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[1])
 
-let city : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[2])
+let city : LevelStruct = LevelStruct(amount: [0,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[2])
 
-let moon : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[3])
+let moon : LevelStruct = LevelStruct(amount: [0,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[3])
 
-let galaxy : LevelStruct = LevelStruct(amount: [1,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[4])
+let galaxy : LevelStruct = LevelStruct(amount: [0,2,3,4,5,6,7,8,9,10], price: [10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[4])
 
 let drink : LevelStruct = LevelStruct(price: [10])
 

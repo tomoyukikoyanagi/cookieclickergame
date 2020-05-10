@@ -16,12 +16,10 @@ class DrinkButton: SKNode {
     private var isEnabled = true
     var drinkLeftLabel: SKLabelNode?
     var nameLabel: SKLabelNode?
-    var drinkLeft: Int
 
     init (buttonAction: @escaping () -> Void){
-        drinkLeft = 0
         button = SKSpriteNode(imageNamed: gameSceneManager.ImageName.drink_disabled.rawValue)
-        drinkLeftLabel = SKLabelNode(text: "\(drinkLeft)")
+        drinkLeftLabel = SKLabelNode(text: "0")
         nameLabel = SKLabelNode(text: "")
         mask = SKSpriteNode(color: SKColor.black, size: button.size)
         mask.alpha = 0.0
@@ -30,10 +28,13 @@ class DrinkButton: SKNode {
         cropNode.zPosition = 3
         cropNode.addChild(mask)
         action = buttonAction
+        
         super.init()
         isUserInteractionEnabled = true
         setupNodes()
         addNodes()
+        
+        self.updateDrinkLabel()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -63,7 +64,7 @@ class DrinkButton: SKNode {
         label.fontColor = SKColor.white
         label.zPosition = 1
     }
-    
+
     func addNodes() {
         addChild(button)
         if let nameLabel = nameLabel{
@@ -101,11 +102,14 @@ class DrinkButton: SKNode {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
                 if button.contains(location) {
+                    let sharedInstance = sheepManager.shared
+                    sharedInstance.useDrink()
                     ACTManager.shared.run(SoundFileName.TapFile.rawValue, onNode: self)
 //                    disable()
                     action()
-                    run(SKAction.sequence([SKAction.wait(forDuration:  0.2), SKAction.run({self.enable()
-                    })]))
+                    updateDrinkLabel()
+//                    run(SKAction.sequence([SKAction.wait(forDuration:  drinkModeTime), SKAction.run({self.enable()
+//                    })]))
                 }
             }
         }
@@ -113,7 +117,7 @@ class DrinkButton: SKNode {
     
     func disable() {
         isEnabled = false
-        mask.alpha = 0.0
+        mask.alpha = 0.5
         button.texture = SKTexture(imageNamed: gameSceneManager.ImageName.drink_disabled.rawValue)
     }
     
@@ -143,17 +147,18 @@ class DrinkButton: SKNode {
         button.size.height = button.size.width * aspectRatio
     }
     
-    func updateLevelLabel(amount: Int){
-        drinkLeft += amount
-        if drinkLeft < 0 {
-            drinkLeft = 0
+    func updateDrinkLabel(){
+        let sharedInstance = sheepManager.shared
+        drinkLeftLabel?.text = "\(sharedInstance.drinkPossessed)"
+        if sharedInstance.drinkPossessed > 0 {
+            self.enable()
+        } else {
+            self.disable()
         }
-            drinkLeftLabel?.text = "\(drinkLeft)"
     }
+
     
-    func drinkMode(){
-        
-    }
+    
 }
 
 

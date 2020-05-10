@@ -9,6 +9,8 @@
 import UIKit
 import SpriteKit
 
+let UniversalFontName = "GenEi LateMin v2"
+
 enum UIUserInterfaceIdiom: Int {
     case undefined
     case phone

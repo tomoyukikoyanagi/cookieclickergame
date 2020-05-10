@@ -78,4 +78,20 @@ let sheepMan2 : talkListStruct = talkListStruct(id: 1, character: "sheepman", st
                                                                                                                                                        "羊１匹も数えずに寝るって",
                                                                                                                                                        "本気か？"])
 
+let sheepMan3 : talkListStruct = talkListStruct(id: 2, character: "sheepman", storyLevel: 1, sheep: 100, drinkUsed: 0, sheepLevel: [1,0,0,0,0,0,0], areaLevel: [0,0,0,0,0], talkList: ["また会ったな",
+"大抵の人間は羊を100匹も数えないうちに寝てしまうらしい。",
+"大体みんな100匹数えないうちに飽きるらしいからな",
+"だが本当に黄金の羊を見つけたいなら",
+"100匹数えた程度で満足してらないないな"])
+
+
+let sheepMan4 : talkListStruct = talkListStruct(id: 2, character: "sheepman", storyLevel: 1, sheep: 0, drinkUsed: 0, sheepLevel: [2,0,0,0,0,0,0], areaLevel: [0,0,0,0,0], talkList: ["羊に数え慣れてくると",
+"羊のレベルが上がるのはもうわかっているな？",
+"よりたくさんの羊を数えたければ、羊のレベル上げは大切だ",
+"だが、羊の数だけで見る夢が決まるはずもまないよな",
+"どのように羊を数えたかも夢に作用する",
+"あと目覚めてからがっかりされても困るから先に言っとくと",
+"寝ると羊のレベルはリセットされるから"])
+
+
 let talkListArray : [talkListStruct] = [sheepMan1,sheepMan2]

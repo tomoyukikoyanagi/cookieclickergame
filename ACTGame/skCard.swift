@@ -14,6 +14,7 @@ class SKCard: SKNode {
     private var mask: SKSpriteNode
     private var cropNode:SKCropNode
     private var action: () -> Void
+    
  
     private var isEnabled = true
     private var title: String
@@ -24,8 +25,10 @@ class SKCard: SKNode {
     
     var levelLabel: SKLabelNode?
     var amountLabel: SKLabelNode?
+    var nameLabel : SKLabelNode?
     
-    init (imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void , levelStruct: LevelStruct){
+    init (name: String, imageNamed: String, amountTitle: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void , levelStruct: LevelStruct){
+        nameLabel = SKLabelNode(text: name)
         self.levelStruct = levelStruct
         level = 0
         card = SKSpriteNode(imageNamed: "card.png")
@@ -64,18 +67,25 @@ class SKCard: SKNode {
     
     func setupNodes() {
         card.zPosition = 0
+        if let nameLabel = nameLabel {
+            setupLabel(label: nameLabel)
+            nameLabel.position = CGPoint(x:0, y: 80)
+            nameLabel.fontSize = CGFloat.universalFont(size: 18)
+            nameLabel.verticalAlignmentMode = .top
+            nameLabel.horizontalAlignmentMode = .center
+        }
         if let sheepImage = sheepImage {
             sheepImage.position = CGPoint(x:0, y:0)
         }
         if let levelLabel = levelLabel {
             setupLabel(label: levelLabel)
-            levelLabel.position = CGPoint(x:-55, y: 118)
+            levelLabel.position = CGPoint(x:-55, y: 105)
             levelLabel.verticalAlignmentMode = .top
             levelLabel.horizontalAlignmentMode = .left
         }
         if let amountLabel = amountLabel {
             setupLabel(label: amountLabel)
-            amountLabel.position = CGPoint(x:55, y: 118)
+            amountLabel.position = CGPoint(x:55, y: 105)
             amountLabel.verticalAlignmentMode = .top
             amountLabel.horizontalAlignmentMode = .right
         }
@@ -83,13 +93,16 @@ class SKCard: SKNode {
     
     func setupLabel(label: SKLabelNode){
         label.fontName = "GenEi LateMin v2"
-        label.fontSize = CGFloat.universalFont(size: 20)
+        label.fontSize = CGFloat.universalFont(size: 16)
         label.fontColor = SKColor.white
         label.zPosition = 1
     }
     
     func addNodes() {
         addChild(card)
+        if let nameLabel = nameLabel {
+            addChild(nameLabel)
+        }
         if let sheepImage = sheepImage {
             addChild(sheepImage)
         }
@@ -209,10 +222,13 @@ class SKCard: SKNode {
         if levelStruct.type != .item {
             let amount = levelStruct.amount?[level] ?? 0
             amountLabel?.text = "\(amount)"
-            purchaseButton.setTitle(title: "\(amount)")
+            let buttonAmount = levelStruct.price[level + 1] ?? 0
+            purchaseButton.setTitle(title: "\(buttonAmount)")
         }
         if level == 10{
-        purchaseButton.setTitle(title: "レベル最大")
+            purchaseButton.setTitle(title: "レベル最大")
+            amountLabel?.text = "レベル最大"
+            purchaseButton.disable()
         }
     }
     
