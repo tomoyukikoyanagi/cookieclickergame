@@ -15,11 +15,13 @@ class BDButton: SKNode {
     private var action: () -> Void
     private var isEnabled = true
     var titleLabel: SKLabelNode?
+    var buttonTitleLabel: SKLabelNode?
     
     
-    init (imageNamed: String, title: String? = "", buttonAction: @escaping () -> Void){
+    init (imageNamed: String, title: String? = "", buttonTitle: String? = "", buttonAction: @escaping () -> Void){
         button = SKSpriteNode(imageNamed: imageNamed)
         titleLabel = SKLabelNode(text: title)
+        buttonTitleLabel = SKLabelNode(text: buttonTitle)
         mask = SKSpriteNode(color: SKColor.black, size: button.size)
         mask.alpha = 0.0
         cropNode = SKCropNode()
@@ -43,11 +45,20 @@ class BDButton: SKNode {
 //        text label will be set center
         if let titleLabel = titleLabel {
             titleLabel.fontName = "GenEi LateMin v2"
-            titleLabel.fontSize = CGFloat.universalFont(size: 20)
+            titleLabel.fontSize = CGFloat.universalFont(size: 16)
             titleLabel.fontColor = SKColor.white
             titleLabel.zPosition = 1
             titleLabel.horizontalAlignmentMode = .center
             titleLabel.verticalAlignmentMode = .center
+        }
+        if let buttonTitleLabel = buttonTitleLabel {
+            buttonTitleLabel.fontName = "GenEi LateMin v2"
+            buttonTitleLabel.fontSize = CGFloat.universalFont(size: 14)
+            buttonTitleLabel.fontColor = SKColor.white
+            buttonTitleLabel.zPosition = 1
+            buttonTitleLabel.horizontalAlignmentMode = .center
+            buttonTitleLabel.verticalAlignmentMode = .center
+            buttonTitleLabel.position = CGPoint(x: 0, y: -50)
         }
     }
     
@@ -55,6 +66,9 @@ class BDButton: SKNode {
         addChild(button)
         if let titleLabel = titleLabel {
             addChild(titleLabel)
+        }
+        if let buttonTitleLabel = buttonTitleLabel {
+            addChild(buttonTitleLabel)
         }
         addChild(cropNode)
     }
@@ -138,4 +152,5 @@ class BDButton: SKNode {
     func setTitle(title: String){
         titleLabel?.text = title
     }
+    
 }

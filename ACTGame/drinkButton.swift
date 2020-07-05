@@ -149,8 +149,8 @@ class DrinkButton: SKNode {
     
     func updateDrinkLabel(){
         let sharedInstance = sheepManager.shared
-        drinkLeftLabel?.text = "\(sharedInstance.drinkPossessed)"
-        if sharedInstance.drinkPossessed > 0 {
+        drinkLeftLabel?.text = "\(String(describing: sharedInstance.getDrinkPossessed()))"
+        if sharedInstance.getDrinkPossessed() > 0 {
             self.enable()
         } else {
             self.disable()

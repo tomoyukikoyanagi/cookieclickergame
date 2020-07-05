@@ -12,33 +12,32 @@ import UIKit
 
 let SHEEPCARDNUM:Int = 10
 
-
-   
-    
+enum countMode {
+    case normal
+    case dog
+    case wolf
+}
 
 class sheepManager {
+    static var shared = sheepManager()
     
-    var sheeps : Int = 0
+    var sheeps : Int = 1000000
     var sheepsPerTap : Int = 0
     var sheepsPerSecond : Int = 0
     var drinkUsed : Int = 0
 //        羊の種類に応じた選択肢
     var sheepLevelArray : [Int] = [1,0,0,0,0,0,0]
     var areaLevelArray : [Int] = [0,0,0,0,0]
-    static var shared = sheepManager()
     
     var drinkMode = false
+    var countMode : countMode = .normal
     
-//    不動変数
-    var drinkPossessed : Int = 1
-    var dreamFragment : Int = 10
-    var storyLevel : Int = 0
-    
-    var currentAreaNo : Int = 0
-    
-    
-    
-    
+//    リセットしない変数
+    private var drinkPossessed : Int = 1
+    private var dreamFragment : Int = 10
+    private var storyLevel : Int = 0
+    private var currentAreaNo : Int = 0
+
 //    ひとまずご50要素
     var dreamArray : [Int] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,]
     
@@ -52,6 +51,8 @@ class sheepManager {
         sheepLevelArray = [1,0,0,0,0,0,0]
         areaLevelArray = [0,0,0,0,0]
         drinkMode = false
+        countMode = .normal
+        
     }
     
     func addSPT() {
@@ -107,8 +108,6 @@ class sheepManager {
         }
         if type == .area{
             areaLevelArray = array
-        } else {
-            
         }
     }
     
@@ -134,14 +133,21 @@ class sheepManager {
         dreamFragment += df
     }
     
+    func getDreamFragment() -> Int{
+        return dreamFragment
+    }
+    
+    func substractDreamFragment(int : Int){
+         self.dreamFragment -= int
+    }
+    
     func storyLevelUp(){
         storyLevel += 1
     }
     
     func getTalkList() -> talkListStruct{
-        var filteredArray : [talkListStruct]
-        filteredArray = talkListArray.filter{ $0.getBool(storyLevel: self.storyLevel, sheep: self.sheeps, drinkUsed: self.drinkUsed, sheepLevel: self.sheepLevelArray, areaLevel: self.areaLevelArray) }
-        return filteredArray[filteredArray.count - 1]
+        let id = getTalkListID(sheep: self)
+        return talkListDictionary[id] ?? defaultTalkList
     }
     
     func endDrinkMode() {
@@ -151,6 +157,20 @@ class sheepManager {
     func startDrinkMode(){
         drinkMode = true
     }
+    
+    func getStoryLevel() -> Int{
+        return storyLevel
+    }
+    
+    func getCurrentAreaNumber() -> Int{
+        return currentAreaNo
+    }
+    
+    func getDrinkPossessed() -> Int {
+        return drinkPossessed
+    }
+    
+
 }
 
 class gameSceneManager {
@@ -172,7 +192,7 @@ class gameSceneManager {
     }
     
     enum SceneType: Int {
-        case TopMenu, Dairy, Settings, DreamScene
+        case TopMenu, Diary, Settings, DreamScene
     }
     
     enum ImageName : String {
@@ -191,18 +211,28 @@ class gameSceneManager {
         case sptLogo = "sptLogo.png"
     
         case popmenuCancelButton = "popmenu_cancel.png"
+        case popupCancel = "cancelbutton.png"
+        case popupOK = "okbutton.png"
         
         case drink_enabled = "drinkbutton_enabled.png"
         case drink_disabled = "drinkbutton_disabled.png"
-    }
-    
-    var sheepCardName : [String]{
-        get{
-            return ["sheep1.png","sheep2.png","sheep0.png","sheep0.png","sheep0.png","sheep0.png"]
-        }
+        
+        case returnbutton = "returnbutton.png"
+        case backbutton = "backbutton.png"
+        case forwardbutton = "forwardbutton.png"
+        case diarytitlenode = "diarytitlenode.png"
         
     }
     
+//    var sheepCardName : [String]{
+//        get{
+//            return ["sheep1.png","sheep2.png","sheep0.png","sheep0.png","sheep0.png","sheep0.png"]
+//        }
+//
+//    }
+    
+    
+//    初回起動時
     private func firstLaunch(){
 
         if !UserDefaults.standard.bool(forKey: "ifFirstLaunch") {
@@ -227,22 +257,19 @@ class gameSceneManager {
 
     }
     
-// MARK:ここは使いたいなぁ
     func getScene (_ sceneType: SceneType) -> SKScene? {
     switch sceneType {
     case SceneType.TopMenu:
         return TopMenu(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
-//    case SceneType.Dairy:
-//        return Dairy(size: CGSize(width: ScreenSize.width, height:ScreenSize.height))
+
     case SceneType.DreamScene:
         return DreamScene(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
 
-    case .Dairy:
-//        ここ修正
-        return TopMenu(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
+    case .Diary:
+        return DiaryScene(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
+        
     case .Settings:
-        //        ここ修正
-        return TopMenu(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
+        return SettingsScene(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
         }
     }
 //

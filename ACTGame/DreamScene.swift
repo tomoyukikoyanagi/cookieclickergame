@@ -30,6 +30,7 @@ class DreamScene: SKScene {
     }
     
     func getTalkSet(talkList: talkListStruct){
+        
         self.count = 0
         self.talkSet = talkList.getTalkList()
         self.character = talkList.getCharacter()
@@ -48,20 +49,12 @@ class DreamScene: SKScene {
            return sprite
         }()
     
-
-    
-//    lazy var backButton: BDButton = {
-//            var button = BDButton(imageNamed: "", title: "Back", buttonAction: {
-//                gameSceneManager.shared.transition(self, toScene:.TopMenu, transition: SKTransition.moveIn(with: .right, duration: 0.5))
-//            })
-//        button.zPosition = Layers.background
-//            button.scaleTo(screenWithPercentage: 0.25)
-//            return button
-//        }()
     
     var characterNode: SKSpriteNode = {
-        var character = SKSpriteNode(imageNamed: "character")
+        var character = SKSpriteNode()
         character.zPosition = Layers.character
+        let characterNode = animationNode(atlasName: AtlasName.sheepMan)
+        character.addChild(characterNode)
         return character
     }()
    
@@ -113,7 +106,12 @@ class DreamScene: SKScene {
 //            if !loadingFlag { return }    // 表示途中で文字を消して、といった処理が来た時用のフラグと処理
             let chara:Character = text[text.startIndex] // 一文字目を取得 Character型で返ってくる
             text.remove(at: text.startIndex)         // 一文字目をテキストから削除
-            if chara != "嬲" {      // 嬲 は改行用のキー文字
+//            if chara != "嬲" {      // 嬲 は改行用のキー文字
+            if n % 20 != 0{
+                } else {    // 改行用の処理
+                    y -= 1.0                // 行目をプラス
+                    x = 0.0                 // 行が変わるので、横にずらす距離を初期化
+                }
                 // ラベルノードの生成
                 var label: SKLabelNode = SKLabelNode(text: "\(chara)")  // "\(chara)"とすることでStringに変換
                 // フォントサイズ指定
@@ -133,12 +131,11 @@ class DreamScene: SKScene {
                 let fadein = SKAction.fadeAlpha(by: 1.0, duration: 0.1)   // 不透明にするアクションの生成
                 let seq = SKAction.sequence([delay, fadein])            // 上記2つのアクションを連結
                 label.run(seq)    // 実行
-                x += 1.0                // 横にずらす距離をプラス
-            } else {    // 改行用の処理
-                y += 1.0                // 行目をプラス
-                x = 0.0                 // 行が変わるので、横にずらす距離を初期化
-            }
-            strcount += 1.0             // 現在の文字数をプラス
+                x += 1.0
+                
+            
+            strcount += 1.0 // 横にずらす距離をプラス
+                        // 現在の文字数をプラス
         }
     }
     
@@ -146,14 +143,14 @@ class DreamScene: SKScene {
         background.position = CGPoint.zero
         fukidashi.position = CGPoint(x:ScreenSize.width * 0.0, y: ScreenSize.height * 0.25)
 //        backButton.position = CGPoint(x: ScreenSize.width * -0.35, y :ScreenSize.height * 0.40)
-        textLabel.position = CGPoint(x:ScreenSize.width * 0.0, y: ScreenSize.height * 0.25)
+        textLabel.position = CGPoint(x:ScreenSize.width * 0.1, y: ScreenSize.height * 0.3)
         emitter.position = CGPoint(x:ScreenSize.width * 0.0 , y:ScreenSize.height * 0.5)
         
     }
     
     func addNodes() {
         addChild(background)
-//        addChild(backButton)
+        addChild(characterNode)
         addChild(fukidashi)
         addChild(textLabel)
         addChild(emitter)
@@ -166,7 +163,6 @@ class DreamScene: SKScene {
             self.setText(text: labelText)
             self.count += 1
         })
-        
     }
 }
 

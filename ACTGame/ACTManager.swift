@@ -51,7 +51,8 @@ class ACTManager {
     func getScene (_ sceneType: SceneType) -> SKScene? {
     switch sceneType {
     case SceneType.MainMenu:
-        return MainMenu(size: CGSize(width: ScreenSize.width, height: ScreenSize.height))
+        return Gameplay(size: CGSize(width: ScreenSize.width, height:
+        ScreenSize.height))
     case SceneType.Gameplay:
         return Gameplay(size: CGSize(width: ScreenSize.width, height:
             ScreenSize.height))

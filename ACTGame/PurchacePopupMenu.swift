@@ -9,6 +9,10 @@
 import Foundation
 import SpriteKit
 
+let titleFontSize : CGFloat = 20
+let titlePostion : CGPoint = CGPoint(x:0, y:100)
+let subTitleFontSize : CGFloat = 16
+let button1Position : CGPoint = CGPoint(x:-65, y: -110)
 //MARK: お金が足りない場合
 class PurchasePopUpMenu1 : SKNode{
     
@@ -46,7 +50,7 @@ class PurchasePopUpMenu1 : SKNode{
     
     var titleLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 30)
+        label.fontSize = CGFloat.universalFont(size: titleFontSize)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -57,7 +61,7 @@ class PurchasePopUpMenu1 : SKNode{
     
     var popupLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 20)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -69,7 +73,7 @@ class PurchasePopUpMenu1 : SKNode{
     func setupNodes() {
         button.position = CGPoint(x:0, y: -110)
         popupLabel.position = CGPoint(x:0, y:0)
-        titleLabel.position = CGPoint(x:0, y:100)
+        titleLabel.position = titlePostion
     }
     
     func addNodes(){
@@ -87,14 +91,23 @@ class PurchasePopUpMenu2 : SKNode{
     private var action1: () -> Void
     private var action2: () -> Void
     private var cardno: Int
+    private var currentAmount : Int
+    private var nextAmount : Int
     
     init (cardNo: Int, cancelAction: @escaping () -> Void, purchaseAction: @escaping () -> Void){
         cardno = cardNo
         action1 = cancelAction
         action2 = purchaseAction
+        
+        let sheep = sheepManager.shared
+               let currentLevel = sheep.sheepLevelArray[self.cardno]
+               nextAmount = getLevelStruct(type: .sheep, no: cardno).amount?[currentLevel + 1] ?? 0
+               currentAmount = getLevelStruct(type: .sheep, no: cardno).amount?[currentLevel] ?? 0
+        
         super.init()
         setupNodes()
         addNodes()
+       
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -118,7 +131,7 @@ class PurchasePopUpMenu2 : SKNode{
     }()
     
    lazy var button1: BDButton = {
-        var button = BDButton(imageNamed: "purchasebutton1.png", title: " ", buttonAction: {
+        var button = BDButton(imageNamed: "cancelbutton.png", title: "キャンセル", buttonAction: {
             self.removeFromParent()
             self.action1()
         })
@@ -126,44 +139,56 @@ class PurchasePopUpMenu2 : SKNode{
     }()
     
     lazy var button2: BDButton = {
-        var button = BDButton(imageNamed: "purchasebutton2.png", title: " ", buttonAction: {
+        var button = BDButton(imageNamed: "okbutton.png", title: "OK", buttonAction: {
             self.removeFromParent()
             self.action2()
         })
         return button
     }()
     
-    lazy var checkLabel: SKLabelNode = {
-        var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 20)
+    func setupLable(label: SKLabelNode) {
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
-        let sheep = sheepManager.shared
-        
-        let currentLevel = sheep.sheepLevelArray[self.cardno]
-        let nextSPT = getLevelStruct(type: .sheep, no: cardno).amount?[currentLevel + 1] ?? 0
-        let currentSPT = getLevelStruct(type: .sheep, no: cardno).amount?[currentLevel] ?? 0
-        let earnSheep = nextSPT - currentSPT
-        label.text = " +\(earnSheep)"
-        return label
-    } ()
+        label.numberOfLines = 3
+    }
     
-    var label: SKLabelNode = {
-           var label = SKLabelNode(fontNamed: UniversalFontName)
-           label.fontSize = CGFloat.universalFont(size: 16)
-           label.zPosition = 2
-           label.color = SKColor.white
-           label.horizontalAlignmentMode = .center
-           label.verticalAlignmentMode = .center
-           label.text = "強化されるパラメーター"
-           return label
-       }()
+    lazy var checkLabelTitle1: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLable(label: label)
+        label.text = "購入前"
+        return label
+    }()
+    
+    lazy var checkLabel1: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLable(label: label)
+        label.text = "\(currentAmount)"
+        return label
+    }()
+    
+    lazy var checkLabelTitle2: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLable(label: label)
+        label.text = "購入後"
+        return label
+    }()
+    
+    lazy var checkLabel2: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLable(label: label)
+        label.text = "\(nextAmount)"
+        return label
+    }()
     
     var titleLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 30)
+        label.fontSize = CGFloat.universalFont(size: titleFontSize)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -175,11 +200,14 @@ class PurchasePopUpMenu2 : SKNode{
     func setupNodes() {
         button1.position = CGPoint(x:-65, y: -110)
         button2.position = CGPoint(x:65, y: -110)
-        titleLabel.position = CGPoint(x:0, y:100)
-        checkLabel.position = CGPoint(x:0, y:0)
+        titleLabel.position = titlePostion
+        checkLabel1.position = CGPoint(x:-50, y:0)
+        checkLabelTitle1.position = CGPoint(x:-50, y:30)
+        checkLabel2.position = CGPoint(x:50, y:0)
+        checkLabelTitle2.position = CGPoint(x:50, y:30)
         logo.position = CGPoint(x: -50, y:0)
-        checkLabel.addChild(logo)
-        label.position = CGPoint(x:0, y:30)
+        checkLabel1.addChild(logo)
+        
     }
     
     func addNodes(){
@@ -188,11 +216,14 @@ class PurchasePopUpMenu2 : SKNode{
         addChild(button1)
         addChild(button2)
         addChild(titleLabel)
-        addChild(checkLabel)
-        addChild(label)
+        addChild(checkLabel1)
+        addChild(checkLabelTitle1)
+        addChild(checkLabel2)
+        addChild(checkLabelTitle2)
     }
 }
 
+//MARK: 背景変更ボタン
 class ChangeBackgroundMenu : SKNode{
     
     private var action1: () -> Void
@@ -237,24 +268,25 @@ class ChangeBackgroundMenu : SKNode{
         return button
     }()
     
-    var titleLabel: SKLabelNode = {
-        var label = SKLabelNode(fontNamed: "***")
-        label.fontSize = CGFloat.universalFont(size: 30)
+    func setupLabel(label: SKLabelNode){
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
+    }
+    
+    lazy var titleLabel: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: titleFontSize)
+        setupLabel(label: label)
         label.text = "背景を変更する"
         return label
     }()
     
-    var popupLabel: SKLabelNode = {
+    lazy var popupLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 20)
-        label.zPosition = 2
-        label.color = SKColor.white
-        label.horizontalAlignmentMode = .center
-        label.verticalAlignmentMode = .center
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLabel(label: label)
         label.text = "背景を変更しますか？"
         return label
     } ()
@@ -276,16 +308,27 @@ class ChangeBackgroundMenu : SKNode{
     }
 }
 
+//MARK: 背景購入
 class PurchaseBackgroundMenu : SKNode{
     
     private var action1: () -> Void
     private var action2: () -> Void
     private var action3: () -> Void
+    private var cardno: Int
+    private var currentAmount: Int
+    private var nextAmount : Int
     
-    init (cancelAction: @escaping () -> Void, purchaseAction: @escaping () -> Void, changeBackground: @escaping () -> Void){
+    init (cardNo: Int, cancelAction: @escaping () -> Void, purchaseAction: @escaping () -> Void, changeBackground: @escaping () -> Void){
         action1 = cancelAction
         action2 = purchaseAction
         action3 = changeBackground
+        cardno = cardNo
+        
+        let sheep = sheepManager.shared
+        let currentLevel = sheep.sheepLevelArray[self.cardno]
+        nextAmount = getLevelStruct(type: .area, no: cardno).amount?[currentLevel + 1] ?? 0
+        currentAmount = getLevelStruct(type: .area, no: cardno).amount?[currentLevel] ?? 0
+        
         super.init()
         setupNodes()
         addNodes()
@@ -301,13 +344,9 @@ class PurchaseBackgroundMenu : SKNode{
         return sprite
     }()
     
-    var popupCard: SKSpriteNode = {
-        var sprite = SKSpriteNode(imageNamed: "popupwindow.png")
-        return sprite
-    }()
-    
-   lazy var button1: BDButton = {
-        var button = BDButton(imageNamed: "popupbutton_cannnotpurchase.png", title: "キャンセル", buttonAction: {
+    lazy var button1: BDButton = {
+        var button = BDButton(imageNamed: "cancelbutton.png", title: "キャンセル", buttonAction: {
+            self.removeAllChildren()
             self.removeFromParent()
             self.action1()
         })
@@ -315,7 +354,7 @@ class PurchaseBackgroundMenu : SKNode{
     }()
     
     lazy var button2: BDButton = {
-        var button = BDButton(imageNamed: "popupbutton_cannnotpurchase.png", title: "強化する", buttonAction: {
+        var button = BDButton(imageNamed: "okbutton.png", title: "購入する", buttonAction: {
             self.removeFromParent()
             self.action2()
         })
@@ -330,9 +369,58 @@ class PurchaseBackgroundMenu : SKNode{
         return button
     }()
     
+    var logo: SKSpriteNode = {
+        var sprite = SKSpriteNode(imageNamed: gameSceneManager.ImageName.spsLogo.rawValue)
+        return sprite
+    }()
+    
+    func setupLabel(label: SKLabelNode) {
+        label.zPosition = 2
+        label.color = SKColor.white
+        label.horizontalAlignmentMode = .center
+        label.verticalAlignmentMode = .center
+        label.numberOfLines = 3
+    }
+    
+    lazy var checkLabelTitle1: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLabel(label: label)
+        label.text = "購入前"
+        return label
+       }()
+    
+    lazy var checkLabel1: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLabel(label: label)
+        label.text = "\(currentAmount)"
+        return label
+    }()
+    
+    lazy var checkLabelTitle2: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLabel(label: label)
+       label.text = "購入後"
+        return label
+    }()
+    
+    lazy var checkLabel2: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLabel(label: label)
+        label.text = "\(nextAmount)"
+        return label
+    }()
+    var popupCard: SKSpriteNode = {
+        var sprite = SKSpriteNode(imageNamed: "popupwindow.png")
+        return sprite
+    }()
+    
     var titleLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 30)
+        label.fontSize = CGFloat.universalFont(size: titleFontSize)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -342,10 +430,16 @@ class PurchaseBackgroundMenu : SKNode{
     }()
     
     func setupNodes() {
-        button1.position = CGPoint(x:0, y: -160)
-        button2.position = CGPoint(x:0, y: -110)
+        button1.position = CGPoint(x:-65, y: -110)
+        button2.position = CGPoint(x:65, y: -110)
         button3.position = CGPoint(x:0, y: -60)
+        logo.position = CGPoint(x: -50, y:0)
+        checkLabel1.position = CGPoint(x:-50, y:0)
+        checkLabelTitle1.position = CGPoint(x:-50, y:30)
+        checkLabel2.position = CGPoint(x:50, y:0)
+        checkLabelTitle2.position = CGPoint(x:50, y:30)
         titleLabel.position = CGPoint(x:0, y:100)
+        checkLabel1.addChild(logo)
     }
     
     func addNodes(){
@@ -355,6 +449,10 @@ class PurchaseBackgroundMenu : SKNode{
         addChild(button1)
         addChild(button2)
         addChild(button3)
+        addChild(checkLabel1)
+        addChild(checkLabelTitle1)
+        addChild(checkLabel2)
+        addChild(checkLabelTitle2)
     }
 }
 
@@ -528,39 +626,33 @@ class DrinkPopUpMenu : SKNode{
         return button
     }()
     
-    var titleLabel: SKLabelNode = {
-        var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 30)
+    func setupLabel(lable: SKLabelNode){
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
         label.verticalAlignmentMode = .center
+    }
+    
+    lazy var titleLabel: SKLabelNode = {
+        var label = SKLabelNode(fontNamed: UniversalFontName)
+        label.fontSize = CGFloat.universalFont(size: titleFontSize)
         label.text = "ドリンクを使用しますか？"
+        setupLabel(lable: label)
         return label
     }()
     
-    var label: SKLabelNode = {
+    lazy var label: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 16)
-        label.zPosition = 2
-        label.color = SKColor.white
-        label.horizontalAlignmentMode = .center
-        label.verticalAlignmentMode = .center
-        label.text = "1分間タップ値が２倍になります"
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        label.text = "1分間タップ値が\n２倍になります"
+        setupLabel(lable: label)
         return label
     }()
     
     lazy var checkLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 20)
-        label.zPosition = 2
-        label.color = SKColor.white
-        label.horizontalAlignmentMode = .center
-        label.verticalAlignmentMode = .center
-        let sheep = sheepManager.shared
-        
-        
-//        label.text = " +\(earnSheep)"
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
+        setupLabel(lable: label)
         return label
     } ()
 
@@ -619,7 +711,7 @@ class PurchaseDrinkPopUpMenu : SKNode{
     }()
     
    lazy var button1: BDButton = {
-        var button = BDButton(imageNamed: "purchasebutton1.png", title: " ", buttonAction: {
+    var button = BDButton(imageNamed: gameSceneManager.ImageName.popupCancel.rawValue, title: "キャンセル", buttonAction: {
             self.removeFromParent()
             self.action1()
         })
@@ -627,7 +719,7 @@ class PurchaseDrinkPopUpMenu : SKNode{
     }()
     
     lazy var button2: BDButton = {
-        var button = BDButton(imageNamed: "purchasebutton2.png", title: " ", buttonAction: {
+        var button = BDButton(imageNamed: gameSceneManager.ImageName.popupOK.rawValue, title: "OK", buttonAction: {
             self.removeFromParent()
             self.action2()
         })
@@ -636,7 +728,7 @@ class PurchaseDrinkPopUpMenu : SKNode{
     
     var titleLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 30)
+        label.fontSize = CGFloat.universalFont(size: titleFontSize)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -647,7 +739,7 @@ class PurchaseDrinkPopUpMenu : SKNode{
     
     var label: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 16)
+        label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -658,7 +750,7 @@ class PurchaseDrinkPopUpMenu : SKNode{
     
     lazy var checkLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
-        label.fontSize = CGFloat.universalFont(size: 20)
+        label.fontSize = CGFloat.universalFont(size: titleFontSize)
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
