@@ -459,7 +459,7 @@ class TopMenu: SKScene{
         
         for i in 0...6{
             sheepCardList[i].position = CGPoint(x: x_pos, y: y_pos)
-            sheepCardList[i].card.scaleTo(screenWithPercentage: 0.45)
+            sheepCardList[i].scaleTo(scaleWithPercentage: 0.45)
             x_pos -= 200
             scrollView.addChild(sheepCardList[i])
         }
@@ -468,22 +468,20 @@ class TopMenu: SKScene{
     func setAreaCard(scrollView: SKSpriteNode){
         var x_pos = 1200
         let y_pos = -30
-        
         for i in 0...4{
             areaCardList[i].position = CGPoint(x: x_pos, y: y_pos)
-            areaCardList[i].card.scaleTo(screenWithPercentage: 0.45)
+//            areaCardList[i].scaleTo(screenWithPercentage: 0.45)
             x_pos -= 200
             scrollView.addChild(areaCardList[i])
         }
     }
-
+    
     func setItemCard(scrollView: SKSpriteNode){
         var x_pos = 1200
         let y_pos = -30
-        
         for i in 0...2{
             itemCardList[i].position = CGPoint(x: x_pos, y: y_pos)
-            itemCardList[i].card.scaleTo(screenWithPercentage: 0.45)
+            itemCardList[i].scaleTo(scaleWithPercentage: 0.45)
             x_pos -= 200
             scrollView.addChild(itemCardList[i])
         }

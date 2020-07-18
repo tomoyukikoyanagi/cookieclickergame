@@ -22,6 +22,7 @@ class ItemCard : SKNode {
             self.levelStruct = levelStruct
             super.init()
             addChild(card)
+            addChild(purchaseButton)
         }
         
         lazy var card: PowerUpCard = {
@@ -30,13 +31,23 @@ class ItemCard : SKNode {
             }, levelStruct: levelStruct)
             return card
         }()
-        
+    
+        lazy var purchaseButton: BDButton = {
+            var button = BDButton(imageNamed: cardButtonImage, title: "", buttonAction: {
+                self.purchase()
+            })
+            button.position = CGPoint(x:0, y: -90)
+            button.scaleTo(screenWithPercentage: 0.4)
+            return button
+        }()
+
         func setButtonLabel(){
             let sm = sheepManager.shared
             let node = SKNode()
             let label = SKLabelNode()
             let logo = SKSpriteNode()
             if self.card.isUnlocked(gameLevel: sm.getStoryLevel()){
+                card.disable()
                 label.text = String(levelStruct.lockLevel)
                 logo.texture = SKTexture(imageNamed: levelLogo)
             } else {
@@ -45,7 +56,7 @@ class ItemCard : SKNode {
             }
             node.addChild(label)
             node.addChild(logo)
-            card.setButtonLabel(label: node)
+            purchaseButton.addChild(node)
         }
         
         required init?(coder aDecoder: NSCoder) {
@@ -80,6 +91,11 @@ class ItemCard : SKNode {
             let price = self.levelStruct.price[sm.getLevel(type: .sheep, id: id)]
             return price
         }
+    
+    func scaleTo(scaleWithPercentage: CGFloat){
+        card.card.scaleTo(screenWidthPercentage: scaleWithPercentage)
+        purchaseButton.scaleTo(screenWithPercentage: scaleWithPercentage - 0.05)
+    }
         
 }
 

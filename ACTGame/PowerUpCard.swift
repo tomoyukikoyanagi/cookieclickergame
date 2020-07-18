@@ -45,22 +45,7 @@ class PowerUpCard: SKNode {
 //        isUnlocked(gameLevel: gameLevel)
     }
     
-    
-    
-//    置き換える
-    lazy var purchaseButton: BDButton = {
-        var button = BDButton(imageNamed: "cardbutton.png", title: "", buttonAction: {
-            self.action()
-            print("pressed purchase button")
-        })
-        button.position = CGPoint(x:0, y: -90)
-        button.scaleTo(screenWithPercentage: 0.4)
-        return button
-    }()
-    
-    func setButtonLabel(label: SKNode){
-        purchaseButton.addChild(label)
-    }
+
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -113,7 +98,6 @@ class PowerUpCard: SKNode {
         if let amountLabel = amountLabel {
             addChild(amountLabel)
         }
-        addChild(purchaseButton)
         addChild(cropNode)
     }
     
@@ -166,17 +150,13 @@ class PowerUpCard: SKNode {
     func disable() {
         isEnabled = false
         mask.alpha = 0.0
-//        card.alpha = 0.3
         amountLabel?.alpha = 0.3
-        purchaseButton.disable()
     }
     
     func enable() {
         isEnabled = true
         mask.alpha = 0.0
         amountLabel?.alpha = 1.0
-//        card.alpha = 1.0
-        purchaseButton.enable()
     }
     
     func isUnlocked(gameLevel : Int) -> Bool{
@@ -202,52 +182,4 @@ class PowerUpCard: SKNode {
             
         }
     }
-    
-//    func changeImage(imageNamed: String){
-//         card = SKSpriteNode(imageNamed: imageNamed)
-//    }
-//
-//    func getPrice() -> Int{
-//        let price = purchaseButton.titleLabel?.text ?? "0"
-//        return Int(price) ?? 0
-    }
-    
-//    func addPopup() {
-//        NotificationCenter.default.post(name: .notifyPopup, object: nil)
-//
-//    }
-    
-//    func purchace(){
-//        let sheep = sheepManager.shared
-//        sheep.sheeps -= self.getPrice()
-//        if self.level < 10 {
-//            self.updateButtonLabel(addLevel: 1)
-//        }
-//    }
-//
-//    func updateButtonLabel(addLevel: Int){
-//        level += addLevel
-//        levelLabel?.text = "Lv.\(level)"
-//        if levelStruct.type != .item {
-//            let amount = levelStruct.amount?[level] ?? 0
-//            amountLabel?.text = "\(amount)"
-//            let buttonAmount = levelStruct.price[level + 1] ?? 0
-//            purchaseButton.setTitle(title: "\(buttonAmount)")
-//        }
-//        if level == 10{
-//            purchaseButton.setTitle(title: "レベル最大")
-//            amountLabel?.text = "レベル最大"
-//            purchaseButton.disable()
-//        }
-//    }
-//
-//    func getLevel() -> Int {
-//        return self.level
-//    }
-//
-//    func getLevelStruct() -> LevelStruct {
-//        return self.levelStruct
-//    }
-//}
-
-
+}

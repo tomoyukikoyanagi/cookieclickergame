@@ -44,6 +44,8 @@ enum countMode {
     case wolf
 }
 
+
+
 let THRESHOLD1 : Int = 100
 let THRESHOLD2 : Int = 10000
 let THRESHOLD3 : Int = 1000000
@@ -67,6 +69,10 @@ let bgImageName : [String] = ["area1.png","area2.png","area2.png","area3.png","a
 let levelLogo = ".png"
 let sheepLogo = ".png"
 let dreamFragmentLogo = ".png"
+
+let areaCardButtonImage = "areacardbutton.png"
+let changeBackgroundButtonImage = "changebackgroundbutton.png"
+let cardButtonImage = "cardbutton.png"
 
 let drinkModeMultiplier = 10
 let drinkModeTime = 10.0

@@ -23,6 +23,8 @@ class AreaCard: SKNode{
         
         super.init()
         addChild(card)
+        addChild(purchaseButton)
+        addChild(changeBackgroundButton)
     }
     
     lazy var card: PowerUpCard = {
@@ -32,6 +34,23 @@ class AreaCard: SKNode{
         return card
     }()
     
+    lazy var purchaseButton: BDButton = {
+        var button = BDButton(imageNamed: areaCardButtonImage, title: "", buttonAction: {
+            self.purchase()
+        })
+        button.position = CGPoint(x:-20, y: -90)
+        button.scaleTo(screenWithPercentage: 0.3)
+        return button
+    }()
+    
+    lazy var changeBackgroundButton: BDButton = {
+        var button = BDButton(imageNamed: changeBackgroundButtonImage, title: "", buttonAction: {
+//            changeBackground(id: self.id)
+        })
+        button.position = CGPoint(x:55, y: -90)
+        button.scaleTo(screenWithPercentage: 0.15)
+        return button
+    }()
 //    背景を変えるボタンを設定する
     
     func setButtonLabel(){
@@ -40,6 +59,7 @@ class AreaCard: SKNode{
         let label = SKLabelNode()
         let logo = SKSpriteNode()
         if self.card.isUnlocked(gameLevel: sm.getStoryLevel()){
+            card.disable()
             label.text = String(levelStruct.lockLevel)
             logo.texture = SKTexture(imageNamed: levelLogo)
         } else {
@@ -48,7 +68,7 @@ class AreaCard: SKNode{
         }
         node.addChild(label)
         node.addChild(logo)
-        card.setButtonLabel(label: node)
+        purchaseButton.addChild(node)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -82,6 +102,11 @@ class AreaCard: SKNode{
             let price = self.levelStruct.price[sm.getLevel(type: .sheep, id: id)]
             return price
         }
+    
+    func scaleTo(scaleWithPercentage: CGFloat){
+        card.card.scaleTo(screenWidthPercentage: scaleWithPercentage)
+        purchaseButton.scaleTo(screenWithPercentage: scaleWithPercentage - 0.05)
+    }
 }
 
 let farmCard : AreaCard = AreaCard(id:0, levelStruct: farm)

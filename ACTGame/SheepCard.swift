@@ -23,6 +23,7 @@ class SheepCard: SKNode{
         
         super.init()
         addChild(card)
+        addChild(purchaseButton)
     }
     
     lazy var card: PowerUpCard = {
@@ -32,23 +33,22 @@ class SheepCard: SKNode{
         return card
     }()
     
-//    lazy var purchaseButton: BDButton = {
-//        var button = BDButton(imageNamed: "cardbutton.png", title: "", buttonAction: {
-//            self.action()
-//            print("pressed purchase button")
-//        })
-//        button.position = CGPoint(x:0, y: -90)
-//        button.scaleTo(screenWithPercentage: 0.4)
-//        return button
-//    }()
-//    
-//    
+    lazy var purchaseButton: BDButton = {
+        var button = BDButton(imageNamed: cardButtonImage, title: "", buttonAction: {
+            self.purchase()
+        })
+        button.position = CGPoint(x:0, y: -90)
+        button.scaleTo(screenWithPercentage: 0.4)
+        return button
+    }()
+
     func setButtonLabel(){
         let sm = sheepManager.shared
         let node = SKNode()
         let label = SKLabelNode()
         let logo = SKSpriteNode()
         if self.card.isUnlocked(gameLevel: sm.getStoryLevel()){
+            card.disable()
             label.text = String(levelStruct.lockLevel)
             logo.texture = SKTexture(imageNamed: levelLogo)
         } else {
@@ -57,11 +57,16 @@ class SheepCard: SKNode{
         }
         node.addChild(label)
         node.addChild(logo)
-        card.setButtonLabel(label: node)
+        purchaseButton.addChild(node)
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func scaleTo(scaleWithPercentage: CGFloat){
+        card.card.scaleTo(screenWidthPercentage: scaleWithPercentage)
+        purchaseButton.scaleTo(screenWithPercentage: scaleWithPercentage - 0.05)
     }
     
 //    MARK:購入処理
@@ -84,7 +89,6 @@ class SheepCard: SKNode{
 //            購入処理
         }
     }
-    
     
     func getPrice() -> Int{
         let sm = sheepManager.shared
