@@ -611,7 +611,7 @@ class DrinkPopUpMenu : SKNode{
     }()
     
    lazy var button1: BDButton = {
-        var button = BDButton(imageNamed: "purchasebutton1.png", title: " ", buttonAction: {
+        var button = BDButton(imageNamed: "cancelbutton.png", title: " ", buttonAction: {
             self.removeFromParent()
             self.action1()
         })
@@ -619,14 +619,14 @@ class DrinkPopUpMenu : SKNode{
     }()
     
     lazy var button2: BDButton = {
-        var button = BDButton(imageNamed: "purchasebutton2.png", title: " ", buttonAction: {
+        var button = BDButton(imageNamed: "okbutton.png", title: " ", buttonAction: {
             self.removeFromParent()
             self.action2()
         })
         return button
     }()
     
-    func setupLabel(lable: SKLabelNode){
+    func setupLabel(label: SKLabelNode){
         label.zPosition = 2
         label.color = SKColor.white
         label.horizontalAlignmentMode = .center
@@ -634,25 +634,25 @@ class DrinkPopUpMenu : SKNode{
     }
     
     lazy var titleLabel: SKLabelNode = {
-        var label = SKLabelNode(fontNamed: UniversalFontName)
+        let label = SKLabelNode(fontNamed: UniversalFontName)
         label.fontSize = CGFloat.universalFont(size: titleFontSize)
         label.text = "ドリンクを使用しますか？"
-        setupLabel(lable: label)
+        setupLabel(label: label)
         return label
     }()
     
-    lazy var label: SKLabelNode = {
-        var label = SKLabelNode(fontNamed: UniversalFontName)
+    lazy var descriptionLabel: SKLabelNode = {
+        let label = SKLabelNode(fontNamed: UniversalFontName)
         label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
         label.text = "1分間タップ値が\n２倍になります"
-        setupLabel(lable: label)
+        setupLabel(label: label)
         return label
     }()
     
     lazy var checkLabel: SKLabelNode = {
         var label = SKLabelNode(fontNamed: UniversalFontName)
         label.fontSize = CGFloat.universalFont(size: subTitleFontSize)
-        setupLabel(lable: label)
+        setupLabel(label: label)
         return label
     } ()
 
@@ -663,7 +663,7 @@ class DrinkPopUpMenu : SKNode{
         checkLabel.position = CGPoint(x:0, y:0)
         logo.position = CGPoint(x: -50, y:0)
         checkLabel.addChild(logo)
-        label.position = CGPoint(x:0, y:30)
+        descriptionLabel.position = CGPoint(x:0, y:30)
     }
     
     func addNodes(){
@@ -673,7 +673,7 @@ class DrinkPopUpMenu : SKNode{
         addChild(button2)
         addChild(titleLabel)
         addChild(checkLabel)
-        addChild(label)
+        addChild(descriptionLabel)
     }
 }
 //MARK: ドリンク購入処理

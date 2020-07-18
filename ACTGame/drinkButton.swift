@@ -21,7 +21,7 @@ class DrinkButton: SKNode {
         button = SKSpriteNode(imageNamed: gameSceneManager.ImageName.drink_disabled.rawValue)
         drinkLeftLabel = SKLabelNode(text: "0")
         nameLabel = SKLabelNode(text: "")
-        mask = SKSpriteNode(color: SKColor.black, size: button.size)
+        mask = SKSpriteNode(color: SKColor.black, size: CGSize(width: button.size.width * 2, height: button.size.height * 2))
         mask.alpha = 0.0
         cropNode = SKCropNode()
         cropNode.maskNode = button
@@ -102,12 +102,9 @@ class DrinkButton: SKNode {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
                 if button.contains(location) {
-                    let sharedInstance = sheepManager.shared
-                    sharedInstance.useDrink()
+
                     ACTManager.shared.run(SoundFileName.TapFile.rawValue, onNode: self)
-//                    disable()
                     action()
-                    updateDrinkLabel()
 //                    run(SKAction.sequence([SKAction.wait(forDuration:  drinkModeTime), SKAction.run({self.enable()
 //                    })]))
                 }

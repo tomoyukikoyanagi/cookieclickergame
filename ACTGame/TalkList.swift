@@ -8,10 +8,7 @@
 
 import Foundation
 
-
-
-
-struct talkListStruct {
+struct talkListStruct : Hashable{
     private var storyLevel : Int
     private var sheep : Int
     private var drinkUsed : Int
@@ -71,7 +68,7 @@ func getTalkListID(sheep: sheepManager) -> Int{
 
             i1 = areaNo
         }
-        return i1 + i2 + i3 + i4 + i5
+        return i5 + i4 + i3 + i2 + i1
     }
     
     func getDogID(sheep: Int, areaNo:Int) -> Int {
@@ -201,31 +198,40 @@ let talkListDictionary : [Int : talkListStruct] = [90000 : defaultTalkList,
                                                    
                                                    10000 : sheepMan0,
                                                    
-                                                   11001 : sheepMan1,
-                                                   11001 : sheepMan2,
+                                                   11000 : sheepMan1,
+                                                   11100 : sheepMan2,
                                                    
-                                                   11111 : sheepMan3,
-                                                   11121 : sheepMan3,
-                                                   11131 : sheepMan3,
-                                                   11141 : sheepMan3,
-                                                   11151 : sheepMan3,
-                                                   11161 : sheepMan3,
-                                                   11171 : sheepMan3,
-                                                   11181 : sheepMan3,
-                                                   11191 : sheepMan3,
-                                                   11211 : sheepMan3,
-                                                   11221 : sheepMan3,
-                                                   11231 : sheepMan3,
-                                                   11241 : sheepMan3,
-                                                   11251 : sheepMan3,
-                                                   11261 : sheepMan3,
-                                                   11271 : sheepMan3,
-                                                   11281 : sheepMan3,
-                                                   11291 : sheepMan3,
-                                                   
-                                                   11201 : sheepMan4,
-                                                   11301 : sheepMan4,
-                                                   11401 : sheepMan4
+//                                                   11110 : sheepMan3,
+//                                                   11120 : sheepMan3,
+//                                                   11130 : sheepMan3,
+//                                                   11140 : sheepMan3,
+//                                                   11150 : sheepMan3,
+//                                                   11160 : sheepMan3,
+//                                                   11170 : sheepMan3,
+//                                                   11180 : sheepMan3,
+//                                                   11190 : sheepMan3,
+//                                                   11210 : sheepMan3,
+//                                                   11220 : sheepMan3,
+//                                                   11230 : sheepMan3,
+//                                                   11240 : sheepMan3,
+//                                                   11250 : sheepMan3,
+//                                                   11260 : sheepMan3,
+//                                                   11270 : sheepMan3,
+//                                                   11280 : sheepMan3,
+//                                                   11290 : sheepMan3,
+//
+//                                                   11200 : sheepMan4,
+//                                                   11300 : sheepMan4,
+//                                                   11400 : sheepMan4,
+//                                                   11500 : sheepMan4,
+//                                                   11600 : sheepMan4,
+//                                                   11700 : sheepMan4
                                                    
                                                    ]
+
+let talkListAchievedDictionary : [talkListStruct : Int] = [sheepMan0 : 0,
+                                                           sheepMan1 : 1,
+                                                           sheepMan2 : 2,
+                                                           sheepMan3 : 3,
+                                                           sheepMan4 : 4]
 

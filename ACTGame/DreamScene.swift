@@ -23,6 +23,7 @@ class DreamScene: SKScene {
         super.init(size: size)
         let sheep = sheepManager.shared
         self.getTalkSet(talkList: sheep.getTalkList())
+        sheep.resetSharedInstance()
         }
     
     required init?(coder aDecoder: NSCoder) {
