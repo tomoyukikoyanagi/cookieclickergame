@@ -24,7 +24,25 @@ class gameSceneManager {
            firstLaunch()
        }
     
-
+    private var dreamSceneID : Int = 0
+    
+    func getDreamSceneId() -> Int {
+        return dreamSceneID
+    }
+    
+    func setDreamSceneID(id : Int){
+        dreamSceneID = id
+    }
+    
+    func sleepDreamSceneId(){
+        let sheep = sheepManager.shared
+        dreamSceneID = sheep.getID()
+    }
+    
+    func resetDreamSceneID(){
+        dreamSceneID = 900000
+    }
+    
     enum SceneType: Int {
         case TopMenu, Diary, Settings, DreamScene
     }

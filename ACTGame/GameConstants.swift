@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SpriteKit
 
 enum purchaseType : String {
     case sheep = "sheep"
@@ -15,6 +16,7 @@ enum purchaseType : String {
 }
 
 enum sheepName : String{
+    case none = "none"
     case corriedale =  "corriedale"
     case suffolk = "suffolk"
     case merino = "merino"
@@ -44,8 +46,6 @@ enum countMode {
     case wolf
 }
 
-
-
 let THRESHOLD1 : Int = 100
 let THRESHOLD2 : Int = 10000
 let THRESHOLD3 : Int = 1000000
@@ -60,6 +60,8 @@ let areaNameArray : [areaName] = [areaName.farm, areaName.mountain, areaName.cit
 let areaNameArrayJp : [String] = ["農場","山","都市","月","宇宙"]
 let itemNameArray : [itemName] = [itemName.drink, itemName.dog, itemName.wolf]
 let itemNameArrayJp : [String] = ["栄養ドリンク","牧羊犬", "オオカミを呼ぶ笛"]
+
+
 let sheepCardName : [String] = ["corriedale.png","suffolk.png","merino.png","lincoln.png","valleyblacknose.png","karacul.png","jacob.png"]
 let areaCardName : [String] = ["farm.png", "mountain.png","city.png","moon.png","universe.png",]
 let itemCardName : [String] = ["drink.png","dog.png","flute.png",]
@@ -70,6 +72,8 @@ let levelLogo = ".png"
 let sheepLogo = ".png"
 let dreamFragmentLogo = ".png"
 
+let diaryNodeImage = ["jisseki.png","","","","","","","unavailable.png"]
+
 let areaCardButtonImage = "areacardbutton.png"
 let changeBackgroundButtonImage = "changebackgroundbutton.png"
 let cardButtonImage = "cardbutton.png"
@@ -77,15 +81,27 @@ let cardButtonImage = "cardbutton.png"
 let drinkModeMultiplier = 10
 let drinkModeTime = 10.0
 
+let popupButtonImage1 = "popupbutton_1.png"
+let popupButtonImage2 = "popupbutton_2.png"
+
+
+struct fontSize {
+    static let cardFontSize : CGFloat = 16
+    static let titleFontSize : CGFloat = 20
+    static let subTitleFontSize : CGFloat = 16
+}
+
 
 struct LevelStruct {
+    var name : String?
     var amount : [Int]? = nil
     var price : [Int]
     var type : purchaseType
     var imageName : String? = nil
     var lockLevel : Int
     
-    init (price: [Int], lockLevel: Int){
+    init (name:String , price: [Int], lockLevel: Int){
+        self.name = name
         self.price = price
         self.type = .item
         self.lockLevel = lockLevel
@@ -100,7 +116,7 @@ struct LevelStruct {
     }
 }
 
-let corriedale : LevelStruct = LevelStruct(amount: [0,1,2,3,4,5,6,7,8,9,10], price:[0,10,20,30,40,50,60,70,80,90,100], type: .sheep, image: sheepImageName[0], lockLevel: 1)
+let corriedale : LevelStruct = LevelStruct(amount: [0,1,2,3,4,5,6,7,8,9,10], price:[0,10,20,30,40,50,60,70,80,90,100], type: .sheep, image: sheepImageName[0], lockLevel: 0)
 
 let suffolk : LevelStruct = LevelStruct(amount: [0,10,20,30,40,50,60,70,80,90,100], price:[0,200,200,2000,20000,200000,2000000,7,8,9,10], type: .sheep, image: sheepImageName[1], lockLevel: 1)
 
@@ -114,7 +130,7 @@ let karacul : LevelStruct = LevelStruct(amount:[0,100000,200000,300000,400000,50
 
 let jacob : LevelStruct = LevelStruct(amount: [0,1000000,2000000,3000000,4000000,5000000,6000000,7000000,8000000,9000000,10000000], price: [0,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000,10000000000], type: .sheep, image: sheepImageName[6], lockLevel: 6)
 
-let farm : LevelStruct = LevelStruct(amount: [0,1,2,3,4,5,2,2,2,2,2,2], price: [0,0,1000,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[0], lockLevel: 0)
+let farm : LevelStruct = LevelStruct(amount: [0,1,2,3,4,5,2,2,2,2,2,2], price: [0,100,1000,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[0], lockLevel: 0)
 
 let mountain : LevelStruct = LevelStruct(amount: [0,2,4,6,8,10,7,8,9,10], price: [0,10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[1], lockLevel: 1)
 
@@ -124,11 +140,11 @@ let moon : LevelStruct = LevelStruct(amount: [0,8,16,32,64,6,7,8,9,10], price: [
 
 let galaxy : LevelStruct = LevelStruct(amount: [0,2,3,4,5,6,7,8,9,10], price: [0,10,200,2000,20000,200000,2000000,2000000,2000000,2000000,20000000], type: .area, image: bgImageName[4], lockLevel: 6)
 
-let drink : LevelStruct = LevelStruct(price: [10], lockLevel: 0)
+let drink : LevelStruct = LevelStruct(name: "drink", price: [10], lockLevel: 0)
 
-let dog : LevelStruct = LevelStruct(price: [10], lockLevel: 1)
+let dog : LevelStruct = LevelStruct(name: "dog", price: [10], lockLevel: 1)
 
-let wolf : LevelStruct = LevelStruct(price: [10], lockLevel: 3)
+let wolf : LevelStruct = LevelStruct(name:"wolf", price: [10], lockLevel: 3)
 
 func getLevelStruct(type: purchaseType, no: Int) -> LevelStruct{
     if type == purchaseType.sheep{
@@ -174,7 +190,7 @@ func getLevelStruct(type: purchaseType, no: Int) -> LevelStruct{
         case 2:
             return wolf
         default:
-            return LevelStruct(price: [0], lockLevel: 0)
+            return LevelStruct(name: "" ,price: [0], lockLevel: 0)
         }
     }
 }

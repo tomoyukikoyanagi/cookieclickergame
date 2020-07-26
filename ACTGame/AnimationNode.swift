@@ -11,6 +11,9 @@ import SpriteKit
 
 enum AtlasName : String{
     case sheepMan = "sheepman"
+    case sheepGirl = "sheepgirl"
+    case drSheep = "drsheep"
+    case dog = "dog"
 }
 
 func animationNode(atlasName: AtlasName) -> SKSpriteNode{

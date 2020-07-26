@@ -58,6 +58,7 @@ class SKCard: SKNode {
         })
         button.position = CGPoint(x:0, y: -90)
         button.scaleTo(screenWithPercentage: 0.4)
+        button.isUserInteractionEnabled = true
         return button
     }()
     

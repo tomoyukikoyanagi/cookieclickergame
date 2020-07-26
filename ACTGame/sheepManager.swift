@@ -13,11 +13,11 @@ let SHEEPCARDNUM:Int = 10
 class sheepManager {
     static var shared = sheepManager()
     
-    var sheeps : Int = 1000000
+    var sheeps : Int = 20000000
     var sheepsPerTap : Int = 0
     var sheepsPerSecond : Int = 0
     var drinkUsed : Int = 0
-//        羊の種類に応じた選択肢
+//        解放状態
     var sheepLevelArray : [Int] = [1,0,0,0,0,0,0]
     var areaLevelArray : [Int] = [0,0,0,0,0]
     
@@ -97,9 +97,36 @@ class sheepManager {
     func updateLevel(type : purchaseType, array: [Int]){
         if type == .sheep{
             sheepLevelArray = array
-        }
-        if type == .area{
+        } else if type == .area{
             areaLevelArray = array
+        }
+    }
+    
+    func levelUp(type : purchaseType, id: Int){
+        if type == .sheep{
+            if sheepLevelArray[id] < 10{
+                sheepLevelArray[id] += 1
+            }
+        } else if type == .area {
+            if areaLevelArray[id] < 10 {
+                areaLevelArray[id] += 1
+            }
+        }
+        updateSPT()
+        updateSPS()
+    }
+    
+    func isLevelMax(type : purchaseType, id: Int) -> Bool{
+        var level = 0
+        if type == .sheep {
+            level = sheepLevelArray[id]
+        } else if type == .area {
+            level = areaLevelArray[id]
+        }
+        if level >= 10 {
+            return true
+        } else {
+            return false
         }
     }
     
@@ -137,17 +164,14 @@ class sheepManager {
         storyLevel = getGameLevel(dreamArray: dreamArray)
     }
     
-    func getTalkList() -> talkListStruct{
+    func getID() -> Int{
         let id = getTalkListID(sheep: self)
         print("id: \(id)")
-        let talkList = talkListDictionary[id] ?? defaultTalkList
-        updateDreamArray(talkListStruct: talkList)
-        return talkList
+        return id
     }
     
-    func updateDreamArray(talkListStruct: talkListStruct) {
-        let dreamNo  = talkListAchievedDictionary[talkListStruct] ?? 0
-        dreamArray[dreamNo] = 1
+    func updateDreamArray(TLSturct: talkListStruct) {
+        dreamArray[TLSturct.getID()] = 1
         checkStoryLevel()
     }
     
@@ -189,4 +213,6 @@ class sheepManager {
         }
     }
 
+    
+    
 }

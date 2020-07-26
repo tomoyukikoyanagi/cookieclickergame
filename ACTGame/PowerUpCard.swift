@@ -10,7 +10,7 @@ import Foundation
 import SpriteKit
 
 class PowerUpCard: SKNode {
-    var card: SKSpriteNode
+    var cardNode: SKSpriteNode
     var sheepImage: SKSpriteNode?
     var levelStruct: LevelStruct
     var action: () -> Void
@@ -26,15 +26,17 @@ class PowerUpCard: SKNode {
     
     init (title: String, imageNamed: String, buttonAction: @escaping () -> Void, levelStruct: LevelStruct){
         nameLabel = SKLabelNode(text: title)
-        card = SKSpriteNode(imageNamed: "card.png")
+        cardNode = SKSpriteNode(imageNamed: "card.png")
+        levelLabel = SKLabelNode()
+        amountLabel = SKLabelNode()
         sheepImage = SKSpriteNode(imageNamed: imageNamed)
         self.levelStruct = levelStruct
         action = buttonAction
         
-        mask = SKSpriteNode(color: SKColor.black, size: card.size)
+        mask = SKSpriteNode(color: SKColor.black, size: cardNode.size)
         mask.alpha = 0.0
         cropNode = SKCropNode()
-        cropNode.maskNode = card
+        cropNode.maskNode = cardNode
         cropNode.zPosition = 3
         cropNode.addChild(mask)
 
@@ -52,10 +54,10 @@ class PowerUpCard: SKNode {
     }
     
     func setupNodes() {
-        card.zPosition = 0
+        cardNode.zPosition = 0
         if let nameLabel = nameLabel {
             setupLabel(label: nameLabel)
-            nameLabel.position = CGPoint(x:0, y: 80)
+            nameLabel.position = CGPoint(x:0, y: 85)
             nameLabel.fontSize = CGFloat.universalFont(size: 18)
             nameLabel.verticalAlignmentMode = .top
             nameLabel.horizontalAlignmentMode = .center
@@ -65,13 +67,13 @@ class PowerUpCard: SKNode {
         }
         if let levelLabel = levelLabel {
             setupLabel(label: levelLabel)
-            levelLabel.position = CGPoint(x:-55, y: 105)
+            levelLabel.position = CGPoint(x:-55, y: 115)
             levelLabel.verticalAlignmentMode = .top
             levelLabel.horizontalAlignmentMode = .left
         }
         if let amountLabel = amountLabel {
             setupLabel(label: amountLabel)
-            amountLabel.position = CGPoint(x:55, y: 105)
+            amountLabel.position = CGPoint(x:55, y: 115)
             amountLabel.verticalAlignmentMode = .top
             amountLabel.horizontalAlignmentMode = .right
         }
@@ -85,7 +87,7 @@ class PowerUpCard: SKNode {
     }
     
     func addNodes() {
-        addChild(card)
+        addChild(cardNode)
         if let nameLabel = nameLabel {
             addChild(nameLabel)
         }
@@ -113,7 +115,7 @@ class PowerUpCard: SKNode {
         if isEnabled {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
-                if card.contains(location) {
+                if cardNode.contains(location) {
 //                    mask.alpha = 0.5
                 } else {
 //                    mask.alpha = 0.0
@@ -126,7 +128,7 @@ class PowerUpCard: SKNode {
         if isEnabled {
             for touch in touches {
                 let location: CGPoint = touch.location(in: self)
-                if card.contains(location) {
+                if cardNode.contains(location) {
                     ACTManager.shared.run(SoundFileName.TapFile.rawValue, onNode: self)
 //                    disable()
                     run(SKAction.sequence([SKAction.wait(forDuration:  0.2), SKAction.run({self.enable()
@@ -137,14 +139,14 @@ class PowerUpCard: SKNode {
     }
     
     func scaleTo(screenWithPercentage: CGFloat){
-        let aspectRatio = card.size.height / card.size.width
+        let aspectRatio = cardNode.size.height / cardNode.size.width
         let screenWidth = ScreenSize.width
         var screenHeight = ScreenSize.height
         if DeviceType.isiPhoneX {
             screenHeight -= 80.0
         }
-        card.size.width = screenWidth * screenWithPercentage
-        card.size.height = card.size.width * aspectRatio
+        cardNode.size.width = screenWidth * screenWithPercentage
+        cardNode.size.height = cardNode.size.width * aspectRatio
     }
     
     func disable() {
@@ -159,13 +161,7 @@ class PowerUpCard: SKNode {
         amountLabel?.alpha = 1.0
     }
     
-    func isUnlocked(gameLevel : Int) -> Bool{
-        if gameLevel >= levelStruct.lockLevel{
-            return false
-        } else {
-            return true
-        }
-    }
+
     
 //    func checkPurchacable(sheep: Int){
 //        if sheep < self.getPrice() {

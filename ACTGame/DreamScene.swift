@@ -12,30 +12,41 @@ import SKTextureGradient
 
 class DreamScene: SKScene {
     
-    var character : String?
+//    var character : String?
     var talkSet : [String]?
     var count = 0
     var max = 0
     var textLabel = SKSpriteNode()
+    var talkList = sheepMan0
     
     override init(size: CGSize) {
         //        ここはセリフ管理クラスで作成
         super.init(size: size)
-        let sheep = sheepManager.shared
-        self.getTalkSet(talkList: sheep.getTalkList())
-        sheep.resetSharedInstance()
+//        self.setTalkSet()
         }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("Error")
     }
     
-    func getTalkSet(talkList: talkListStruct){
-        
+    func setTalkSet(){
         self.count = 0
+        let gsmShared = gameSceneManager.shared
+        let id = gsmShared.getDreamSceneId()
+        let sheep = sheepManager.shared
+        self.talkList = getTalkList(id: id)
         self.talkSet = talkList.getTalkList()
-        self.character = talkList.getCharacter()
         self.max = talkList.getTalkList().count
+        sheep.resetSharedInstance()
+        gsmShared.resetDreamSceneID()
+    }
+    
+    override func didMove(to view: SKView) {
+        print("moved to dreamScene")
+        anchorPoint = CGPoint(x: 0.5, y:0.5)
+        self.setTalkSet()
+        setupNodes()
+        addNodes()
     }
     
     var background: SKSpriteNode = {
@@ -58,6 +69,12 @@ class DreamScene: SKScene {
         character.addChild(characterNode)
         return character
     }()
+    
+    func changeCharacter(characterName: AtlasName) {
+        characterNode.removeAllChildren()
+        let character = animationNode(atlasName: characterName)
+        characterNode.addChild(character)
+    }
    
     lazy var fukidashi: BDButton = {
         var button = BDButton(imageNamed: "pop.png", title: "", buttonAction: {
@@ -79,16 +96,10 @@ class DreamScene: SKScene {
     lazy var emitter: SKEmitterNode = {
         let emitter = SKEmitterNode(fileNamed: "SnowParticle.sks")!
         emitter.zPosition = Layers.emitter
-        
     return emitter
     }()
     
-    override func didMove(to view: SKView) {
-        print("moved to mainmenu")
-        anchorPoint = CGPoint(x: 0.5, y:0.5)
-        setupNodes()
-        addNodes()
-    }
+    
     
     func setText(text: String!){
         let fontSize: CGFloat = 17.0    // フォントサイズ
@@ -141,6 +152,7 @@ class DreamScene: SKScene {
     }
     
     func setupNodes() {
+        changeCharacter(characterName: talkList.getCharacter())
         background.position = CGPoint.zero
         fukidashi.position = CGPoint(x:ScreenSize.width * 0.0, y: ScreenSize.height * 0.25)
 //        backButton.position = CGPoint(x: ScreenSize.width * -0.35, y :ScreenSize.height * 0.40)
