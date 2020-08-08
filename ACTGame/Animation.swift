@@ -17,7 +17,7 @@ func drinkModeAnimationNode() -> SKNode{
     animationNode.addChild(rainbowNode)
     rainbowNode.position = CGPoint(x:  ScreenSize.width * 3.0 , y:0)
     rainbowNode.nodes(at:CGPoint(x:0 , y:0))
-    rainbowNode.isUserInteractionEnabled = true
+//    rainbowNode.isUserInteractionEnabled = true
     let actionMove = SKAction.move(to: CGPoint(x:ScreenSize.width * -2.5, y: 0), duration: TimeInterval(drinkModeTime))
     rainbowNode.run(actionMove)
     animationNode.isUserInteractionEnabled = false

@@ -32,8 +32,9 @@ class TopMenu: SKScene{
     override init(size: CGSize) {
         super.init(size: size)
         NotificationCenter.default.addObserver(self, selector: #selector(updateSPS(notification:)), name: .notifyName, object: nil)
-//        let sheep = sheepManager.shared
-//        sheep.updateSPT()
+        let sheep = sheepManager.shared
+        sheep.updateSPT()
+        sheep.updateSPS()
         setupNodes()
         addNodes()
         }
@@ -206,7 +207,7 @@ class TopMenu: SKScene{
     //    MARK:ドリンクボタン
     lazy var useDrinkButton: DrinkButton = {
         var button = DrinkButton(buttonAction: {
-            self.addChild(useDrink)
+            self.addChild(self.useDrink)
 //            let popup = DrinkPopUpMenu(cancelAction:{},purchaseAction:{
 //                let sharedInstance = sheepManager.shared
 //                sharedInstance.startDrinkMode()
@@ -228,6 +229,18 @@ class TopMenu: SKScene{
         return button
     }()
 
+    lazy var useDrink : PopupDouble = PopupDouble(title: "ドリンクを飲みますか？", subTitle: "手に入る夢のかけら＊＊＊", buttonTitle: "飲む", cancelTitle: "飲まない", okAction: {
+        let sharedInstance = sheepManager.shared
+        sharedInstance.startDrinkMode()
+        self.addChild(drinkModeAnimationNode())
+        DispatchQueue.main.asyncAfter(deadline: .now() + drinkModeTime, execute: {
+                            sharedInstance.endDrinkMode()
+                            sharedInstance.updateSPT()
+            
+                        })
+    }, cancelAction: {})
+
+    
 //    MARK:ゆめにっきボタン
     lazy var diaryButton: BDButton = {
         var button = BDButton(imageNamed: "diarybutton.png", buttonTitle: buttonNameArrayJP[3], buttonAction:{
@@ -361,8 +374,8 @@ class TopMenu: SKScene{
         lazy var popMenuBackground : SKSpriteNode = {
             let sprite = SKSpriteNode(imageNamed: gameSceneManager.ImageName.popmenuBackground1.rawValue)
             sprite.scaleTo(screenWidthPercentage: 1.1)
-            sprite.isUserInteractionEnabled = true
             sprite.zPosition = topmenuLayer.popmenufront
+            sprite.isUserInteractionEnabled = true
             return sprite
         }()
         
@@ -377,6 +390,8 @@ class TopMenu: SKScene{
             popMenuCancelButton.run(SKAction.sequence([actionMove3]))
             menuChangeButton.run(SKAction.sequence([actionMove4]))
             scrollView?.isDisabled = false
+            sheepButton.silent()
+            sleepButton.disable()
         }
     
         func hideScrollView(){
@@ -390,7 +405,10 @@ class TopMenu: SKScene{
             popMenuCancelButton.run(SKAction.sequence([actionMove3]))
             menuChangeButton.run(SKAction.sequence([actionMove4]))
             scrollView?.isDisabled = true
+            sheepButton.enable()
+            sleepButton.enable()
         }
+    
         
         lazy var popMenuCancelButton : BDButton = {
             var button = BDButton(imageNamed: gameSceneManager.ImageName.popmenuCancelButton.rawValue, buttonAction:{
@@ -437,7 +455,6 @@ class TopMenu: SKScene{
         
         func addMovableNode() {
 //            MARK:これをチェック
-            
             moveableNode.zPosition = topmenuLayer.popmenufront
             scrollView = SwiftySKScrollView(frame: CGRect(x:0, y:  ScreenSize.height * 5 / 8, width: ScreenSize.width, height: ScreenSize.height / 4), moveableNode: moveableNode, direction: .horizontal)
             scrollView?.contentSize = CGSize(width: scrollView!.frame.width * 4, height: scrollView!.frame.height / 4)

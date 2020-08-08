@@ -128,5 +128,4 @@ class PopupDouble : SKNode{
 //                },
 //                                           cancelAction: {})
 
-let useDrink : PopupDouble = PopupDouble(title: "ドリンクを飲みますか？", subTitle: "手に入る夢のかけら＊＊＊", buttonTitle: "飲む", cancelTitle: "飲まない", okAction: {}, cancelAction: {})
 

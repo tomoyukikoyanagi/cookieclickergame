@@ -27,7 +27,7 @@ class sheepManager {
 //    リセットしない変数
     private var drinkPossessed : Int = 1
     private var dreamFragment : Int = 10
-    private var storyLevel : Int = 0
+    private var storyLevel : Int = 1
     private var currentAreaNo : Int = 0
 
 //    ひとまずご50要素

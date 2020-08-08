@@ -117,6 +117,10 @@ class BDButton: SKNode {
         
     }
     
+    func silent(){
+         isEnabled = false
+    }
+    
     func enable() {
         isEnabled = true
         mask.alpha = 0.0

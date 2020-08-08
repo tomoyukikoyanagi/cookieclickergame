@@ -56,6 +56,7 @@ class SKCard: SKNode {
 //            self.addPopup()
             print("pressed purchase button")
         })
+        
         button.position = CGPoint(x:0, y: -90)
         button.scaleTo(screenWithPercentage: 0.4)
         button.isUserInteractionEnabled = true

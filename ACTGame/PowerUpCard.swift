@@ -106,8 +106,8 @@ class PowerUpCard: SKNode {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if isEnabled {
 //            mask.alpha = 0.5
-            run(SKAction.scale(by: 1.25, duration: 0.05))
-            run(SKAction.scale(by: 0.8, duration: 0.01))
+//            run(SKAction.scale(by: 1.25, duration: 0.05))
+//            run(SKAction.scale(by: 0.8, duration: 0.01))
         }
     }
     

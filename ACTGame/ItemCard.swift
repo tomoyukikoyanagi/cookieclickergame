@@ -21,8 +21,9 @@ class ItemCard : SKNode {
             self.imageNamed = itemCardName[id]
             self.levelStruct = levelStruct
             super.init()
-            addChild(card)
-            addChild(purchaseButton)
+            addNodes()
+            setPosition()
+            update()
         }
         
         lazy var card: PowerUpCard = {
@@ -36,27 +37,53 @@ class ItemCard : SKNode {
             var button = BDButton(imageNamed: cardButtonImage, title: "", buttonAction: {
                 self.purchase()
             })
-            button.position = CGPoint(x:0, y: -90)
             button.scaleTo(screenWithPercentage: 0.4)
             return button
         }()
+    
+        lazy var buttonLabel: SKLabelNode = {
+            let label = SKLabelNode(fontNamed: UniversalFontName)
+            label.fontSize = CGFloat.universalFont(size: fontSize.cardFontSize)
+            return label
+        }()
+        
+        lazy var buttonLogo: SKSpriteNode = {
+            let buttonLogo = SKSpriteNode()
+            return buttonLogo
+        }()
 
-        func setButtonLabel(){
+    func update(){
+        updateButton()
+        updateLabel()
+    }
+    
+        func updateLabel() {
             let sm = sheepManager.shared
-            let node = SKNode()
-            let label = SKLabelNode()
-            let logo = SKSpriteNode()
-            if self.card.isUnlocked(gameLevel: sm.getStoryLevel()){
+            if self.isUnlocked(gameLevel: sm.getStoryLevel()){
                 card.disable()
-                label.text = String(levelStruct.lockLevel)
-                logo.texture = SKTexture(imageNamed: levelLogo)
+                buttonLabel.text = String(levelStruct.lockLevel)
+                buttonLogo.texture = SKTexture(imageNamed: levelLogo)
             } else {
-                label.text = String(getPrice())
-                logo.texture = SKTexture(imageNamed: dreamFragmentLogo)
+                buttonLabel.text = String(getPrice())
+                buttonLogo.texture = SKTexture(imageNamed: sheepLogo)
+                setCardLabel()
             }
-            node.addChild(label)
-            node.addChild(logo)
-            purchaseButton.addChild(node)
+        }
+    
+    func updateButton() {
+        let sm = sheepManager.shared
+        if sm.getDreamFragment() >= getPrice(){
+            purchaseButton.enable()
+        } else {
+            purchaseButton.disable()
+        }
+    }
+        
+        func addNodes(){
+            addChild(card)
+            addChild(purchaseButton)
+            purchaseButton.addChild(buttonLabel)
+            purchaseButton.addChild(buttonLogo)
         }
         
         required init?(coder aDecoder: NSCoder) {
@@ -68,7 +95,7 @@ class ItemCard : SKNode {
         func purchase() {
             let sm = sheepManager.shared
             
-            if self.card.isUnlocked(gameLevel: sm.getStoryLevel()){
+            if self.isUnlocked(gameLevel: sm.getStoryLevel()){
     //解放レベルに至っていない
     //            popup1
             } else if sm.isPurchasable(price: self.getPrice()){
@@ -78,23 +105,75 @@ class ItemCard : SKNode {
     //            popupdouble
             }
             
-            if sm.getLevel(type: .sheep, id: id) == 0{
+            if sm.getLevel(type: .item, id: id) == 0{
     //購入処理（初回）
             }else{
     //            購入処理
             }
         }
         
-        
+        func isUnlocked(gameLevel : Int) -> Bool{
+            if gameLevel >= levelStruct.lockLevel{
+                return false
+            } else {
+                return true
+            }
+        }
+    
         func getPrice() -> Int{
             let sm = sheepManager.shared
-            let price = self.levelStruct.price[sm.getLevel(type: .sheep, id: id)]
+            let price = sm.getDreamFragment()
             return price
         }
     
     func scaleTo(scaleWithPercentage: CGFloat){
-        card.card.scaleTo(screenWidthPercentage: scaleWithPercentage)
+        card.scaleTo(screenWithPercentage: scaleWithPercentage)
         purchaseButton.scaleTo(screenWithPercentage: scaleWithPercentage - 0.05)
+    }
+    
+    func setPosition(){
+        purchaseButton.position = CGPoint(x:0, y: -100)
+        buttonLabel.position = CGPoint(x: 30, y: -5)
+        buttonLogo.position = CGPoint(x: 0, y: 0)
+    }
+    
+    func getMode() -> countMode{
+        let sm = sheepManager.shared
+        let mode = sm.countMode
+        return mode
+    }
+    
+    func setCardLabel(){
+        var label = ""
+        switch self.levelStruct.name {
+        case "drink":
+            label = "ドリンク数  \(getDrinks())"
+        case "dog":
+            if getMode() == .normal{
+                label = "購入可能"
+            }else if getMode() == .dog{
+                label = "購入済み"
+            }else if getMode() == .wolf{
+                label = "購入できません"
+            }
+        case "wolf":
+            if getMode() == .normal{
+                label = "購入可能"
+            }else if getMode() == .dog{
+                label = "購入できません"
+            }else if getMode() == .wolf{
+                label = "購入済み"
+            }
+        default:
+            label = ""
+        }
+        self.card.levelLabel?.text = label
+    }
+    
+    func getDrinks() -> Int{
+        let sm = sheepManager.shared
+        let amount = sm.getDrinkPossessed()
+        return amount
     }
         
 }
@@ -104,3 +183,8 @@ let dogCard : ItemCard = ItemCard(id: 1, levelStruct: dog)
 let wolfCard : ItemCard = ItemCard(id: 2, levelStruct: wolf)
 let itemCardList : [ItemCard] = [drinkCard,dogCard,wolfCard]
 
+func updateItemCardList(){
+    for i in 0...itemCardList.count-1{
+        itemCardList[i].update()
+    }
+}
