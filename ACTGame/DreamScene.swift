@@ -8,7 +8,7 @@
 
 import SpriteKit
 import UIKit
-import SKTextureGradient
+//import SKTextureGradient
 
 class DreamScene: SKScene {
     

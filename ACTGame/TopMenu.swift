@@ -9,7 +9,7 @@
 import Foundation
 import SpriteKit
 
-import SwiftySKScrollView
+//import SwiftySKScrollView
 
 
 let sheepCardLabelName : [String] = []
