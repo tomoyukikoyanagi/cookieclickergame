@@ -27,4 +27,4 @@ written in swift SpriteKit
 
 ## Author
 
-[tcnksm](https://github.com/tcnksm)
+[tomoyukikoyanagi](https://github.com/tomoyukikoyanagi)
