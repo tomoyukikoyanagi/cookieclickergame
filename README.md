@@ -1,11 +1,7 @@
 
 <img src="https://user-images.githubusercontent.com/62272146/115169849-27818580-a0fa-11eb-8d74-9fda008e7ee8.png" width="80" height="80">cookieclickergame
 ====
-
-Overview
-
-simple cookie clickergame Demo App
-written in swift SpriteKit
+simple cookie clickergame Demo App written in swift SpriteKit
 
 ## Description
 This xcodeproject aims at creating cookie clicker game with simple UI. Using Sprite kit, whole game scene sequence is designed in single view and viewController.
@@ -17,13 +13,14 @@ main game view
 
 
 ## Requirement
-
+Swift Language Version : Swift 5<br>
+Target Device : iOS 13.2 or latter
 ## Usage
 
 ## Install
+Please download source code by zip.
 
 ## Contribution
-*/
 
 ## Licence
 
