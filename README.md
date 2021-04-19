@@ -1,3 +1,4 @@
+![corriedale@2x](https://user-images.githubusercontent.com/62272146/115169849-27818580-a0fa-11eb-8d74-9fda008e7ee8.png)
 cookieclickergame
 ====
 
