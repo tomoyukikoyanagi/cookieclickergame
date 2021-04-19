@@ -8,9 +8,10 @@ simple cookie clickergame Demo App
 written in swift SpriteKit
 
 ## Description
-
+This xcodeproject aims at creating cookie clicker game with simple UI. Using Sprite kit, whole game scene sequence is designed in single view and viewController.
 
 ## Demo
+main game view 
 ![mov01](https://user-images.githubusercontent.com/62272146/115169477-1421ea80-a0f9-11eb-8701-b3237d74a046.gif)
 ![mov02](https://user-images.githubusercontent.com/62272146/115169483-171cdb00-a0f9-11eb-92ae-e4920773aa4c.gif)
 
@@ -22,6 +23,7 @@ written in swift SpriteKit
 ## Install
 
 ## Contribution
+*/
 
 ## Licence
 
